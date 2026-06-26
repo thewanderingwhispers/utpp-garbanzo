@@ -1,0 +1,119 @@
+:root,
+[data-rpg-theme="light"] {
+
+  --th-font-main: Verdana, Arial, sans-serif;
+
+  --th-cl-font: #243c3a; 
+  --th-cl-tle: #263b39; 
+  --th-cl-sub: #887969;
+  --th-cl-txt: #474039; 
+  --th-cl-neutral: #d8cec0;
+
+  --th-cl-bg: #fbf7ef;
+  --th-cl-panel: #fffaf2;
+  --th-cl-panelAlt: #f5ecdd;
+  --th-cl-card: #fffdf8; 
+  --th-cl-cardAlt: #f7f1e7;
+
+  --th-cl-bord: rgba(70, 64, 57, 0.12);
+  --th-cl-bordDark: #b8a995;
+
+  --th-cl-shadow: rgba(82, 68, 50, 0.14);
+  --th-cl-shadowStrong: rgba(82, 68, 50, 0.24);
+
+  --th-cl-acc1: #d7f0ee; 
+  --th-cl-acc2: #8bcfcb; 
+  --th-cl-acc3: #3f7773; 
+
+  --th-cl-desc1: #f8dcae; 
+  --th-cl-desc2: #ebb86f; 
+  --th-cl-desc3: #a56a24;
+
+  --th-cl-accSoft: rgba(215, 240, 238, 0.7);
+  --th-cl-accFade: rgba(139, 207, 203, 0.22);
+  --th-cl-descSoft: rgba(248, 220, 174, 0.72);
+  --th-cl-descFade: rgba(235, 184, 111, 0.22);
+
+  --th-grad-panel: linear-gradient(
+    135deg,
+    rgba(215, 240, 238, 0.68),
+    rgba(248, 220, 174, 0.62)
+  );
+
+  --th-grad-head: linear-gradient(
+    135deg,
+    #d7f0ee,
+    #f7ead4 52%,
+    #f8dcae
+  );
+
+  --th-grad-chip: linear-gradient(
+    135deg,
+    var(--th-cl-acc2),
+    var(--th-cl-desc2)
+  );
+
+  --th-radius-xs: 5px;
+  --th-radius-sm: 8px;
+  --th-radius-md: 14px;
+  --th-radius-lg: 22px;
+
+  --th-panel-width: 360px;
+  --th-panel-gap: 12px;
+
+  --th-trans-fast: 0.18s ease;
+  --th-trans-med: 0.28s ease;
+}
+
+[data-rpg-theme="dark"] {
+
+  --th-cl-font: #f7f1e8;
+  --th-cl-tle: #f6f1e9; 
+  --th-cl-sub: #b9aaa0; 
+  --th-cl-txt: #e5ded4;
+  --th-cl-neutral: #60706f;
+
+  --th-cl-bg: #101313;
+  --th-cl-panel: #151a1a;
+  --th-cl-panelAlt: #1d2928;
+  --th-cl-card: #181f1f;
+  --th-cl-cardAlt: #111717;
+
+  --th-cl-bord: rgba(188, 227, 225, 0.13);
+  --th-cl-bordDark: #355452;
+
+  --th-cl-shadow: rgba(0, 0, 0, 0.42);
+  --th-cl-shadowStrong: rgba(0, 0, 0, 0.62);
+
+  --th-cl-acc1: #bce3e1;
+  --th-cl-acc2: #52a8a5;
+  --th-cl-acc3: #295452;
+
+  --th-cl-desc1: #f0c584;
+  --th-cl-desc2: #d69b45;
+  --th-cl-desc3: #7d4b16;
+
+  --th-cl-accSoft: rgba(188, 227, 225, 0.16);
+  --th-cl-accFade: rgba(82, 168, 165, 0.18);
+  --th-cl-descSoft: rgba(240, 197, 132, 0.18);
+  --th-cl-descFade: rgba(214, 155, 69, 0.17);
+
+  --th-grad-panel: linear-gradient(
+    135deg,
+    rgba(82, 168, 165, 0.18),
+    rgba(214, 155, 69, 0.17)
+  );
+
+  --th-grad-head: linear-gradient(
+    135deg,
+    #102423,
+    #183836 55%,
+    #4d2f11
+  );
+
+  --th-grad-chip: linear-gradient(
+    135deg,
+    var(--th-cl-acc2),
+    var(--th-cl-desc2)
+  );
+}
