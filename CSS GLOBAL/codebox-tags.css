@@ -1,0 +1,129 @@
+/* ---------- BALISES CODE / QUOTE / HIDE / SPOILER / BLOCKQUOTE ---------- */
+
+/* blockquote */
+blockquote, .quote {
+  padding: 14px 16px;
+  border-left: 2px solid #111827;
+  background: #f9fafb;
+  border-radius: 12px;
+  font-style: normal;
+  font-size: 13px;
+  color: #374151;
+  margin: 15px auto;
+  max-width: 90%;
+  position: relative;
+}
+blockquote::before, .quote::before {
+  content: "fragment archivé";
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  display: block;
+  margin-bottom: 6px;
+}
+blockquote cite, .quote .quote-author {
+  font-weight: 500;
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* code */
+.codebox {
+  position: relative;
+  width: 100%!important;
+  margin: 15px auto!important;
+  border-radius: 14px!important;
+  background: #0f172a!important;
+  color: #e5e7eb!important;
+  font-family: 'Fira Code', monospace!important;
+  font-size: 12.5px!important;
+  line-height: 1.6!important;
+  padding: 14px!important;
+  max-height: 300px!important;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.codebox::before {
+  content: "terminal // accès système";
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #9ca3af;
+}
+.codebox::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+  opacity: 0.7;
+}
+
+/* spoiler */
+.spoiler dt {
+  font-size: 11px !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  cursor: pointer;
+  background: #111827;
+  color: #e5e7eb;
+  border-radius: 12px 12px 0 0;
+}
+.spoiler dt::before {
+  content: "contenu scellé // ";
+  opacity: 0.6;
+}
+.spoiler dt::after {
+  content: "⟶";
+  position: absolute;
+  right: 12px;
+  transition: 0.25s ease;
+  opacity: 0.6;
+}
+.spoiler:not(.spoiler_closed) dt::after {
+  transform: rotate(90deg);
+}
+.spoiler_content {
+  padding: 12px 14px;
+  background: #f9fafb;
+  border-radius: 0 0 12px 12px;
+  border: 1px solid rgba(0,0,0,0.05);
+  border-top: none;
+  color: #374151;
+}
+.spoiler_content[hidden] {
+  display: none !important;
+}
+
+/* hidecode */
+.hidecode dt {
+  font-size: 11px !important;
+  padding: 10px 14px;
+  background: #e5e7eb;
+  color: #111827;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.hidecode dt::before {
+  content: "accès sous autorisation — ";
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #6b7280;
+}
+.hidecode dd > div {
+  background: #fafafa;
+  padding: 12px 14px;
+  border-radius: 0 0 10px 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-top: none;
+}
