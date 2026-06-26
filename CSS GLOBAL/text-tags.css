@@ -1,0 +1,41 @@
+/* ---------- balises aes du forum ---------- */
+
+/* titres */
+ti1 { font: 30px var(--fti1); letter-spacing: 1px; }
+ti2 { font: 30px var(--fti2); text-transform: uppercase; font-style: italic; }
+ti3 { font: 30px var(--fti3); letter-spacing: 5px; text-transform: lowercase; }
+ti4 { font: 35px var(--fti4); text-transform: lowercase; letter-spacing: 2px; }
+ti5 { font: 35px var(--fti5); }
+ti6 { font: 60px var(--fti6); letter-spacing: -3px; }
+ti7 { font: 30px var(--fti7); text-transform: uppercase; }
+
+/* sous-titres */
+st1 { font:16px var(--fst1); letter-spacing:1px; }
+st2 { font:16px var(--fst2); letter-spacing:1px; }
+st3 { font:16px var(--fst3); letter-spacing:1px; }
+st4 { font:16px var(--fst4); letter-spacing:1px; }
+st5 { font:16px var(--fst5); letter-spacing:1px; }
+st6 { font:16px var(--fst6); letter-spacing:1px; }
+st7 { font:16px var(--fst7); letter-spacing:1px; }
+
+/* texte */
+te1 { font-family:var(--fte1); }
+te2 { font-family:var(--fte2); }
+te3 { font-family:var(--fte3); }
+te4 { font-family:var(--fte4); }
+te5 { font-family:var(--fte5); }
+te6 { font-family:var(--fte6); }
+te7 { font-family:var(--fte7); }
+te8 { font-family:var(--fte8); }
+te9 { font-family:var(--fte9); }
+
+/* variantes */
+v1 { }
+v2 { }
+v3 { }
+v4 { }
+v5 { }
+
+/* trigger warning */
+tw { filter: blur(6px); transition: 0.3s ease; }
+tw:hover { filter: blur(0); }
