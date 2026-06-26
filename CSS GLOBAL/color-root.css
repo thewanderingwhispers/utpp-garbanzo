@@ -1,5 +1,4 @@
-:root,
-[data-rpg-theme="light"] {
+:root {
 
   --th-font-main: Verdana, Arial, sans-serif;
 
@@ -63,6 +62,35 @@
 
   --th-trans-fast: 0.18s ease;
   --th-trans-med: 0.28s ease;
+
+    /* font titre */
+  --fti1: "Bebas Neue", sans-serif;
+  --fti2: "Oswald", sans-serif;
+  --fti3: "Anton", sans-serif;
+  --fti4: "Cinzel", serif;
+  --fti5: "Playfair Display SC", serif;
+  --fti6: "Allan", serif; 
+  --fti7 : "Arial Black";
+    
+  /* font sous-titre */
+  --fst1: "Playfair Display", serif;
+  --fst2: "Arvo", serif;
+  --fst3: "Montserrat", sans-serif;
+  --fst4: "Raleway", sans-serif;
+  --fst5: "Quicksand", sans-serif;
+  --fst6: "Atkinson Hyperlegible Mono", sans-serif;
+  --fst7: "Roboto Slab", serif;
+    
+  /* font texte */
+  --fte1: "Roboto", sans-serif;
+  --fte2: "Inter", sans-serif;
+  --fte3: "Courier New";
+  --fte4: "Sans-serif";
+  --fte5: "Arial";
+  --fte6: "Georgia";
+  --fte7: "Serif";
+  --fte8: "Times New Roman";
+  --fte9: "Verdana";
 }
 
 [data-rpg-theme="dark"] {
