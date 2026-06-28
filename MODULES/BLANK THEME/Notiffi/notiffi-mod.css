@@ -4,13 +4,13 @@
 
 #notiffi_button {
   cursor: pointer;
-  background: var(--color02);
-  border-radius: var(--radiusbis);
+  background: var(--th-cl-panelAlt);
+  border-radius: var(--th-radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--colornews);
-  border: 1px solid var(--border);
+  color: var(--th-cl-acc3);
+  border: 1px solid var(--th-cl-bord);
   width: 45px;
   height: 45px;
   padding: 0;
@@ -28,7 +28,7 @@
   content: "";
   width: 20px;
   height: 20px;
-  background-color: var(--colorfont);
+  background-color: var(--th-cl-font);
   mask-image: url("https://unpkg.com/lucide-static/icons/bell.svg");
   mask-size: contain;
   mask-repeat: no-repeat;
@@ -37,8 +37,8 @@
 }
 #notiffi_button:hover {
   transform: scale(1.1) rotate(-8deg);
-  background: var(--gradient);
-  color:var(--colorfont)!important;
+  background: var(--th-grad-chip);
+  color:var(--th-cl-font)!important;
 }
 
 .unread_count {
@@ -49,8 +49,8 @@
   height: 15px;
   padding: 0 4px;
   border-radius: 999px;
-  background: var(--colorimp);
-  color: var(--colorfont);
+  background: var(--th-cl-desc2);
+  color: var(--th-cl-font);
   font-size: 10px;
   font-weight: 700;
   line-height: 15px;
@@ -75,7 +75,7 @@
   flex-direction: column;
   gap: 10px;
   align-items: start;
-  background: rgba(10, 10, 10, 0.9);
+  background: var(--th-cl-panel);
   backdrop-filter: blur(18px);
   padding: 15px;
   z-index: 998;
@@ -92,7 +92,7 @@
   left: 0;
   width: 1px;
   height: 100%;
-  background: var(--gradient-vertical);
+  background: var(--th-grad-chip);
 }
 
 #notiffi_panel.open,
@@ -108,7 +108,7 @@ z-index:996;
   width: 100%;
   overflow: auto;
   max-height: 100%;
-  background: var(--color02);
+  background: var(--th-cl-panelAlt);
   padding: 10px;
   border-radius: 10px;
   -ms-overflow-style: none;
@@ -131,7 +131,7 @@ z-index:996;
   width: 100%;
   display: flex;
   justify-content: space-between;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--th-cl-bord);
   padding-top: 10px;
 }
 
@@ -141,31 +141,31 @@ z-index:996;
 
   button {
         padding: 2px 9px;
-        background: var(--color02);
+        background: var(--th-cl-panelAlt);
         letter-spacing: 1px;
-        font: 10px var(--font-text);
+        font: 10px var(--fte1);
         text-transform: uppercase;
-        border: 1px solid var(--border);
-        color: var(--bordercolor);
+        border: 1px solid var(--th-cl-bord);
+        color: var(--th-cl-bordDark);
         border-radius: 5px;
 
     &:hover {
-      color: var(--coloradd);
+      color: var(--th-cl-acc3);
     }
   }
 }
   
 #notiffi_delete_all {
-  color:var(--colorimp);
+  color:var(--th-cl-desc3);
 }
 
 a.notiffi_see_all {
-  background: var(--color02);
+  background: var(--th-cl-panelAlt);
   padding: 4px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--mainradius);
-  color: var(--colorbis);
-  font: 10px var(--font-text);
+  border: 1px solid var(--th-cl-bord);
+  border-radius: var(--th-radius-md);
+  color: var(--th-cl-acc3);
+  font: 10px var(--fte1);
   text-transform: uppercase;
   height: 20px;
 }
@@ -175,13 +175,13 @@ a.notiffi_see_all {
   gap: 15px;
   padding: 10px;
   border-radius: 5px;
-  background-color: var(--color03);
-  border: 1px solid var(--border);
+  background-color: var(--th-cl-card);
+  border: 1px solid var(--th-cl-bord);
   transition: border .2s;
   animation: notiffiFadeIn 0.3s ease-in-out;
 
   &:hover {
-    border-color: var(--colorbis);
+    border-color: var(--th-cl-acc2);
   }
 }
 
@@ -196,8 +196,8 @@ a.notiffi_see_all {
 }
 
 .notification.unread {
-  background-color: var(--colorunread);
-  border: 1px solid var(--border);
+  background-color: var(--th-cl-accFade);
+  border: 1px solid var(--th-cl-bord);
 }
 
 .notif_details {
@@ -216,7 +216,7 @@ a.notiffi_see_all {
   object-fit: cover;
   object-position: center;
   border-radius: 50px;
-  outline: 1px var(--border) solid;
+  outline: 1px var(--th-cl-bord) solid;
   outline-offset: 5px;
   }
 }
@@ -224,7 +224,7 @@ a.notiffi_see_all {
   background-image: url("https://zupimages.net/up/26/20/z3y2.jpg") !important;
   background-size: cover;
   background-position: center;
-  outline: 1px var(--border) solid;
+  outline: 1px var(--th-cl-bord) solid;
   outline-offset: 5px;
   border-radius: 50%;
 }
@@ -233,8 +233,8 @@ a.notiffi_see_all {
   position: absolute;
   bottom: -5px;
   right: -5px;
-  background: var(--bordercolor);
-  color: var(--colorfont);
+  background: var(--th-cl-bordDark);
+  color: var(--th-cl-font);
   width: 15px;
   aspect-ratio: 1;
   display: grid;
@@ -250,31 +250,31 @@ a.notiffi_see_all {
 }
 
 .notification.unread .notif_icon {
-  color: var(--colorfont);
-  background: var(--colorimp);
-  outline:1px var(--colorbis) solid;
+  color: var(--th-cl-font);
+  background: var(--th-cl-desc2);
+  outline:1px var(--th-cl-acc2) solid;
 }
 
 .notif_content {
   width: 100%;
 }
 .notif_text {
-  font: 12px var(--font-text);
-  color: var(--colorfont);
+  font: 12px var(--fte1);
+  color: var(--th-cl-font);
   & a {
-  color:var(--coloradd);
+  color:var(--th-cl-acc3);
   }
 }
 
 .notif_time {
   margin-top: 5px;
-  color: var(--colorbis);
-  font: 10px var(--font-text);
+  color: var(--th-cl-sub);
+  font: 10px var(--fte1);
 }
 
 .notif_close {
-  background: var(--colorimp);
-  color: var(--colorfont);
+  background: var(--th-cl-desc2);
+  color: var(--th-cl-font);
   align-self: start;
   font-size: 13px;
   line-height: 0;
@@ -297,7 +297,7 @@ a.notiffi_see_all {
   z-index: 99;
   bottom: 10px;
   right: 10px;
-  background: var(--neutralDarker);
+  background: var(--th-cl-cardAlt);
   transform: translateY(100%);
   opacity: 0;
   filter: blur(5px);
@@ -312,7 +312,7 @@ a.notiffi_see_all {
 }
 
 .alert_close {
-  background: var(--neutral);
+  background: var(--th-cl-neutral);
   font-size: 18px;
   line-height: 0;
   border-radius: 100px;
