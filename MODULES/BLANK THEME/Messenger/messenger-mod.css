@@ -1,7 +1,7 @@
 #FAM,
 #FAM .FAM-inputbox,
 #FAM-msg {
-  font-family: var(--font-text);
+  font-family: var(--fte1);
 }
 
 .FAM-clear,
@@ -21,13 +21,13 @@
 #FAM {
   display: grid;
   grid-template-rows: max-content max-content 1fr;
-  color: var(--colorfont);
+  color: var(--th-cl-font);
   font-size: 12px;
-  background: var(--bgcolor);
+  background: var(--th-cl-bg);
   position: fixed;
   height: 100%;
   width: 90%;
-  max-width: var(--FAM-windowSize);
+  max-width: var(--th-panel-width);
   left: 65px;
   z-index: 99;
   visibility: visible;
@@ -38,7 +38,7 @@
   grid-template-columns: 100%;
 }
 
-/* Fenetre fermée */
+/* Fenetre fermÃ©e */
 #FAM[data-hidden="true"] {
   visibility: hidden;
   opacity: 0;
@@ -57,10 +57,10 @@
 
 /* Bouton pour ouvrir la fenetre */
 #FAM-button-open {
-    color: var(--colorfont);
+    color: var(--th-cl-font);
     font-size: 18px;
-    background-color: var(--color02);
-    border: 1px solid var(--border);
+    background-color: var(--th-cl-panelAlt);
+    border: 1px solid var(--th-cl-bord);
     border-radius: 10px;
     width: 45px;
     height: 45px;
@@ -73,18 +73,18 @@
 }
 
 #FAM-button-open:hover {
-  background: var(--FAM-accentClr);
-  color: var(--FAM-pluginBackground);
+  background: var(--th-cl-acc3);
+  color: var(--th-cl-card);
 }
 
 #FAM[data-hidden="false"] ~ #FAM-button-open {
-  background: var(--FAM-accentClr);
-  color: var(--FAM-pluginBackground);
+  background: var(--th-cl-acc3);
+  color: var(--th-cl-card);
 }
 
-/* Entête de la fenetre */
+/* EntÃªte de la fenetre */
 #FAM-toolbar {
-  color: var(--FAM-titleClr);
+  color: var(--th-cl-tle);
   position: relative;
   margin: 20px 15px 15px;
 }
@@ -96,9 +96,9 @@
   gap: 15px;
 }
 
-/* Bouton flèche de retour */
+/* Bouton flÃ¨che de retour */
 .FAM-toolbar-button {
-  color: var(--FAM-button);
+  color: var(--th-cl-acc3);
   font-size: 24px;
   cursor: pointer;
 }
@@ -117,7 +117,7 @@
 
 #FAM-idle,
 .FAM-button {
-  color: var(--FAM-buttonsClr);
+  color: var(--th-cl-acc3);
   cursor: pointer;
 }
 
@@ -126,8 +126,8 @@
   display: grid;
   grid-template-rows: 1fr max-content;
   overflow: auto;
-  background: var(--bgcolor);
-  border:1px solid var(--border);
+  background: var(--th-cl-bg);
+  border:1px solid var(--th-cl-bord);
   border-radius: 10px 10px 0 0;
   margin: 10px 15px 0 15px;
 }
@@ -159,12 +159,12 @@
 
 .FAM-viewing-topic:before {
   top: 0px;
-  background: var(--FAM-gradientTop);
+  background: var(--th-grad-panel);
 }
 
 .FAM-viewing-topic:after {
   bottom: 0;
-  background: var(--FAM-gradientBot);
+  background: var(--th-grad-panel);
 }
 
 /* Chargement */
@@ -204,15 +204,15 @@
 
 /* Mise en vieille */
 #FAM-idle {
-  background: var(--FAM-sleepModeBackground);
+  background: var(--th-grad-panel);
   z-index: 999;
   transition: 300ms;
 }
 
 /* Boutons */
 .FAM-button {
-  background-color: var(--FAM-accentClr);
-  color: var(--FAM-pluginBackground);
+  background-color: var(--th-cl-acc3);
+  color: var(--th-cl-card);
   border-radius: 8px;
   padding: 5px 12px 6px;
   border: none;
@@ -223,7 +223,7 @@
 }
 
 .FAM-button:hover {
-  color: var(--FAM-fontClr);
+  color: var(--th-cl-txt);
 }
 
 .FAM-inline-buttons {
@@ -236,26 +236,26 @@
   margin: 3px;
   background-color: transparent;
   font-size: 18px;
-  color: var(--FAM-accentClr);
+  color: var(--th-cl-acc3);
 }
 
 .FAM-button-large {
-  background-color: var(--FAM-accentClr);
+  background-color: var(--th-cl-acc3);
   border-radius: 4px;
   font-weight: 700;
   padding: 5px 15px;
-  color: var(--FAM-pluginBackground);
+  color: var(--th-cl-card);
   margin: 0 auto;
 }
 
 .FAM-button-large:hover {
-  background-color: var(--FAM-secondClr);
+  background-color: var(--th-cl-desc2);
 }
 
 #FAM .FAM-inputbox {
-  color: var(--FAM-fontClr);
-  font-size: var(--FAM-fontSize);
-  background-color: var(--FAM-pluginBackground);
+  color: var(--th-cl-txt);
+  font-size: 12px;
+  background-color: var(--th-cl-card);
   border: none;
   border-radius: 10px;
   padding: 10px;
@@ -311,17 +311,17 @@
 
 
 .FAM-section-title {
-  color: #39f;
+  color: var(--th-cl-acc3);
   font-size: 18px;
   font-weight: 700;
-  border-bottom: 2px solid #39f;
+  border-bottom: 2px solid var(--th-cl-acc3);
   margin: 12px auto;
   padding-bottom: 3px;
 }
 
 hr.FAM-hr {
   border: none;
-  border-top: 2px solid #ddd;
+  border-top: 2px solid var(--th-cl-bord);
   margin: 24px 0;
 }
 
@@ -375,7 +375,7 @@ hr.FAM-hr {
 }
 
 .FAM-error {
-  color: #f66;
+  color: var(--th-cl-desc3);
   font-weight: 700;
 }
 
@@ -396,7 +396,7 @@ hr.FAM-hr {
 }
 
 #FAM ::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--th-cl-shadow);
   border: none;
 }
 
@@ -406,7 +406,7 @@ hr.FAM-hr {
 }
 
 #FAM-actions {
-  background-color: var(--FAM-textareaBackground);
+  background-color: var(--th-cl-cardAlt);
   border-radius: 10px;
   margin: 10px 35px;
   align-items: end;
@@ -432,12 +432,12 @@ hr.FAM-hr {
 #FAM-new-topic {
   cursor: pointer;
   font-size: 28px;
-  color: var(--FAM-accentClr);
+  color: var(--th-cl-acc3);
   margin-bottom: 20px;
 }
 
 #FAM-new-topic:hover {
-  color: var(--FAM-fontClr);
+  color: var(--th-cl-txt);
 }
 
 .FAM-buttons-container {
@@ -447,7 +447,7 @@ hr.FAM-hr {
 }
 
 .FAM-buttons-container > button {
-  color: var(--FAM-accentClr);
+  color: var(--th-cl-acc3);
   background-color: transparent;
   font-size: 20px;
   border: none;
@@ -456,7 +456,7 @@ hr.FAM-hr {
 }
 
 .FAM-buttons-container > button:hover {
-  color: var(--FAM-secondClr);
+  color: var(--th-cl-desc2);
 }
 
 .FAM-buttons-container > button[data-disabled="true"] {
@@ -475,7 +475,7 @@ hr.FAM-hr {
 }
 
 #FAM-timeout-bar {
-  background: #ccc;
+  background: var(--th-cl-neutral);
   position: absolute;
   left: 0;
   bottom: 0;
@@ -488,17 +488,17 @@ hr.FAM-hr {
   cursor: pointer;
   display: grid;
   grid-template-columns: max-content 1fr;
-  color: var(--FAM-fontLightClr);
+  color: var(--th-cl-sub);
 }
 
 .FAM-chat:hover,
 .FAM-chat:hover a {
-  color: var(--FAM-titleClr);
+  color: var(--th-cl-tle);
 }
 
 .FAM-chat:hover .FAM-chat-avatar,
 .FAM-chat:hover .FAM-chat-content {
-  background-color: var(--FAM-pluginBackground);
+  background-color: var(--th-cl-card);
 }
 
 .FAM-forum-name,
@@ -544,7 +544,7 @@ hr.FAM-hr {
 
 .FAM-forum .FAM-chat-avatar,
 .FAM-forum .FAM-chat-content {
-  background-color: var(--FAM-pluginBackground);
+  background-color: var(--th-cl-card);
 }
 
 .FAM-forum + .FAM-topic > .FAM-topic-name,
@@ -595,13 +595,13 @@ hr.FAM-hr {
 
 .FAM-chat-date > a.lastpost_link {
   font-weight: 600;
-  color: var(--FAM-fontClr) !important;
+  color: var(--th-cl-txt) !important;
   margin-right: 5px;
 }
 
 .FAM-chat-date > strong {
   margin-left: 5px;
-  background-color: var(--FAM-msgBackground);
+  background-color: var(--th-cl-cardAlt);
   padding: 0px 4px 0px;
   border-radius: 4px;
 }
@@ -621,7 +621,7 @@ hr.FAM-hr {
 .FAM-new-post,
 .FAM-new-post a,
 .FAM-new-post .FAM-chat-title {
-  color: var(--FAM-titleClr);
+  color: var(--th-cl-tle);
   font-weight: bold !important;
 }
 
@@ -630,7 +630,7 @@ hr.FAM-hr {
 }
 
 .FAM-new-post .FAM-chat-avatar img {
-  color: var(--FAM-newMsgAnimation);
+  color: var(--th-cl-acc2);
   transform: scale(1);
   animation: FAMpulse 3s infinite;
 }
@@ -664,34 +664,34 @@ hr.FAM-hr {
 
 #FAM a.FAM-page-link,
 .FAM-page-link {
-  color: #fff;
+  color: var(--th-cl-card);
   font-size: 12px;
   text-decoration: none;
-  background: var(--FAM-accentClr);
-  color: var(--FAM-pluginBackground);
+  background: var(--th-cl-acc3);
+  color: var(--th-cl-card);
   display: inline-block;
   padding: 1px 6px 2px;
   border-radius: 5px;
 }
 
 #FAM a.FAM-page-link:hover {
-  background: var(--FAM-buttonsClr);
+  background: var(--th-cl-acc3);
 }
 
 #FAM a.FAM-page-link:active {
-  background: var(--FAM-buttonsClr);
+  background: var(--th-cl-acc3);
 }
 
 b.FAM-page-link,
 strong.FAM-page-link {
-  background: var(--FAM-pluginBackground);
+  background: var(--th-cl-card);
   font-weight: 400;
-  color: var(--FAM-fontClr);
+  color: var(--th-cl-txt);
 }
 
 #FAM-msg {
-  color: var(--FAM-fontClr);
-  font-size: var(--normal-size);
+  color: var(--th-cl-txt);
+  font-size: 14px;
   background: 0 0;
   border: none;
   width: 100%;
@@ -725,7 +725,7 @@ strong.FAM-page-link {
 }
 
 .FAM-msg-online .FAM-msg-avatar {
-  border-color: #39f;
+  border-color: var(--th-cl-acc3);
 }
 
 .FAM-msg-avatar img {
@@ -760,7 +760,7 @@ strong.FAM-page-link {
 }
 
 .FAM-my-msg .FAM-msg-text {
-  background: var(--FAM-myMsgBackground);
+  background: var(--th-cl-acc1);
   border-radius: 17px 17px 6px 17px;
   padding: 8px 15px 8px 20px;
   float: right;
@@ -768,7 +768,7 @@ strong.FAM-page-link {
 
 .FAM-msg-text {
   font-size: 14px;
-  background: var(--FAM-msgBackground);
+  background: var(--th-cl-cardAlt);
   border-radius: 17px 17px 17px 6px;
   padding: 8px 20px 8px 15px;
 }
@@ -815,7 +815,7 @@ strong.FAM-page-link {
   text-overflow: ellipsis;
   overflow: hidden;
   flex-basis: fit-content;
-  color: var(--FAM-fontLightClr);
+  color: var(--th-cl-sub);
 }
 
 .FAM-name-mention {
@@ -827,7 +827,7 @@ strong.FAM-page-link {
 }
 
 .FAM-msg-error .FAM-msg-content:before {
-  border-left-color: #f33;
+  border-left-color: var(--th-cl-desc3);
 }
 
 .FAM-msg-text .FAM-attachment,
@@ -856,7 +856,7 @@ strong.FAM-page-link {
 }
 
 .FAM-msg-text .FAM-attachment td {
-  color: var(--FAM-fontClr);
+  color: var(--th-cl-txt);
   font-size: 14px;
   min-height: 20px;
   line-height: 20px;
@@ -925,7 +925,7 @@ strong.FAM-page-link {
 }
 
 .FAM-msg-button:hover {
-  color: var(--FAM-buttonHover);
+  color: var(--th-cl-desc3);
 }
 
 .FAM-edit-button {
@@ -976,13 +976,13 @@ strong.FAM-page-link {
 
 .FAM-codebox cite a,
 .FAM-codebox dt a {
-  color: var(--FAM-titleClr);
+  color: var(--th-cl-tle);
 }
 
 .FAM-codebox cite,
 .FAM-codebox dt,
 .FAM-spoiler dt {
-  color: var(--FAM-titleClr);
+  color: var(--th-cl-tle);
   font-weight: 600;
   margin: 0;
   cursor: auto !important;
@@ -1025,7 +1025,7 @@ blockquote.FAM-codebox:before {
   position: absolute;
   z-index: 1;
   content: "";
-  background: var(--FAM-quoteBackground);
+  background: var(--th-cl-descSoft);
   inset: -8px -20px -10px -15px;
   border-radius: 17px 17px 0 0;
 }
@@ -1048,7 +1048,7 @@ blockquote.FAM-codebox > div {
 
 .FAM-spoiler_content:after {
   content: "";
-  background: var(--FAM-chatBackground);
+  background: var(--th-cl-cardAlt);
   position: absolute;
   inset: -3px;
   visibility: visible;
@@ -1076,11 +1076,11 @@ blockquote.FAM-codebox > div {
 }
 
 #FAM-new-msg-notif {
-  color: #fff;
+  color: var(--th-cl-card);
   font-size: 14px;
   font-weight: 700;
   text-align: center;
-  background: #39f;
+  background: var(--th-cl-acc3);
   position: absolute;
   height: 30px;
   line-height: 30px;
@@ -1109,7 +1109,7 @@ blockquote.FAM-codebox > div {
 }
 
 #FAM-new-msg-divider {
-  color: #39f;
+  color: var(--th-cl-acc3);
   font-size: 18px;
   text-align: center;
   margin: 12px;
@@ -1118,7 +1118,7 @@ blockquote.FAM-codebox > div {
 #FAM-new-msg-divider:after,
 #FAM-new-msg-divider:before {
   content: "";
-  background: #39f;
+  background: var(--th-cl-acc3);
   display: inline-block;
   width: 25%;
   height: 2px;
@@ -1149,16 +1149,16 @@ blockquote.FAM-codebox > div {
   top: 0;
   display: flex;
   align-items: center;
-  background: var(--FAM-chatBackground);
-  color: var(--FAM-fontClr);
+  background: var(--th-cl-cardAlt);
+  color: var(--th-cl-txt);
   border-radius: 5px;
   padding: 0 8px;
   margin-left: 5px;
 }
 
 #FAM-tab-add:hover {
-  background: var(--FAM-accentClr);
-  color: var(--FAM-pluginBackground);
+  background: var(--th-cl-acc3);
+  color: var(--th-cl-card);
 }
 
 #FAM-tabs {
@@ -1182,7 +1182,7 @@ blockquote.FAM-codebox > div {
   top: 0;
   bottom: 0;
   width: 20%;
-  background: var(--FAM-gradient);
+  background: var(--th-grad-panel);
   z-index: 5;
   pointer-events: none;
 }
@@ -1192,7 +1192,7 @@ blockquote.FAM-codebox > div {
 }
 
 #FAM-tabs::-webkit-scrollbar-thumb {
-  background-color: var(--FAM-accentClr);
+  background-color: var(--th-cl-acc3);
   border-radius: 3px;
 }
 
@@ -1208,7 +1208,7 @@ blockquote.FAM-codebox > div {
 }
 
 .FAM-tab {
-  background: var(--colorbis);
+  background: var(--th-cl-panelAlt);
   border-radius: 5px;
   position: relative;
   display: inline-block;
@@ -1226,8 +1226,8 @@ blockquote.FAM-codebox > div {
 }
 
 .FAM-tab:hover {
-  background: var(--coloradd);
-  color: var(--colorfont);
+  background: var(--th-cl-acc1);
+  color: var(--th-cl-font);
 }
 
 .FAM-tab:hover i {
@@ -1236,8 +1236,8 @@ blockquote.FAM-codebox > div {
 
 .FAM-tab.FAM-tab-active {
   font-weight: 700;
-  background: var(--colorimp);
-  color: var(--colorfont);
+  background: var(--th-cl-acc2);
+  color: var(--th-cl-font);
 }
 
 .FAM-tab-name {
@@ -1253,7 +1253,7 @@ blockquote.FAM-codebox > div {
 }
 
 .FAM-tab-close:hover {
-  color: #f33;
+  color: var(--th-cl-desc3);
 }
 
 #FAM-about {
@@ -1277,16 +1277,16 @@ blockquote.FAM-codebox > div {
 }
 
 #FAM #FAM-service-title a {
-  color: var(--FAM-fontClr);
+  color: var(--th-cl-txt);
   font-weight: 400;
 }
 
 #FAM-service-title b {
-  color: var(--FAM-accentClr);
+  color: var(--th-cl-acc3);
 }
 
 #FAM-service-title b:last-child {
-  color: var(--FAM-accentClr);
+  color: var(--th-cl-acc3);
 }
 
 #FAM-content:has(#FAM-about) + #FAM-actions {
@@ -1294,7 +1294,7 @@ blockquote.FAM-codebox > div {
 }
 
 #FAM-actions .FAM-dropdown {
-  background: var(--FAM-pluginBackground);
+  background: var(--th-cl-card);
   border: none;
   position: absolute;
   right: 0;
