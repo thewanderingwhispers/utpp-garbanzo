@@ -21,16 +21,16 @@
 
 .color-scheme-toggle {
   padding: 5px 8px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--th-cl-bord);
   font-size: 34px;
   text-align: center;
   height: 45px;
   width: 45px;
-  border-radius: var(--radiusbis);
-  background: var(--color02);
-  color: var(--colorfont);
+  border-radius: var(--th-radius-md);
+  background: var(--th-cl-panelAlt);
+  color: var(--th-cl-font);
 }
 
 .color-scheme-toggle:hover {
-   color: var(--accentClr);
+   color: var(--th-cl-acc3);
 }
