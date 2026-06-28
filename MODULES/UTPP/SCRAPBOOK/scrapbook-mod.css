@@ -3,10 +3,10 @@
   width: 45px;
   height: 45px;
   margin: 0 auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radiusbis);
-  background: var(--color02);
-  color: var(--colorfont);
+  border: 1px solid var(--th-cl-bord);
+  border-radius: var(--th-radius-md);
+  background: var(--th-cl-panelAlt);
+  color: var(--th-cl-font);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -15,8 +15,8 @@
 
 #fa-pins-button:hover {
   transform: scale(1.08) rotate(-6deg);
-  background: var(--gradient);
-  color: var(--colorfont);
+  background: var(--th-grad-chip);
+  color: var(--th-cl-font);
 }
 
 #fa-pins-button svg {
@@ -32,8 +32,8 @@
   height: 15px;
   padding: 0 4px;
   border-radius: 999px;
-  background: var(--colorimp);
-  color: var(--colorfont);
+  background: var(--th-cl-desc2);
+  color: var(--th-cl-font);
   font-size: 10px;
   font-weight: 700;
   line-height: 15px;
@@ -54,7 +54,7 @@
   height: 100%;
   padding: 15px;
   z-index: 996;
-  background: rgba(10, 10, 10, 0.9);
+  background: var(--th-cl-panel);
   backdrop-filter: blur(18px);
   transform: translateX(100%);
   opacity: 0;
@@ -71,16 +71,16 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: 1px;
-  background: var(--gradient-vertical);
+  background: var(--th-grad-chip);
 }
 
 .fa-pins-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--colorfont);
+  color: var(--th-cl-font);
   margin-bottom: 15px;
-  font: 700 14px var(--font-text);
+  font: 700 14px var(--fte1);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -97,8 +97,8 @@
 }
 
 #fa-pins-close {
-  background: var(--colorimp);
-  color: var(--colorfont);
+  background: var(--th-cl-desc2);
+  color: var(--th-cl-font);
   border: 0;
   border-radius: 50%;
   width: 22px;
@@ -114,25 +114,25 @@
   gap: 8px;
   margin-bottom: 15px;
   padding: 8px 12px;
-  border-radius: var(--mainradius);
-  border: 1px solid var(--border);
-  background: var(--color02);
-  color: var(--coloradd);
+  border-radius: var(--th-radius-md);
+  border: 1px solid var(--th-cl-bord);
+  background: var(--th-cl-panelAlt);
+  color: var(--th-cl-acc3);
   cursor: pointer;
   text-transform: uppercase;
-  font: 11px var(--font-text);
+  font: 11px var(--fte1);
 }
 
 #fa-add-current-topic:hover {
-  background: var(--gradient);
-  color: var(--colorfont);
+  background: var(--th-grad-chip);
+  color: var(--th-cl-font);
 }
 
 #fa-pinned-list {
   list-style: none;
   padding: 10px;
   margin: 0;
-  background: var(--color02);
+  background: var(--th-cl-panelAlt);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -143,30 +143,30 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: var(--color03);
-  border: 1px solid var(--border);
+  background: var(--th-cl-card);
+  border: 1px solid var(--th-cl-bord);
   border-radius: 8px;
   padding: 10px;
 }
 
 #fa-pinned-list li:hover {
-  border-color: var(--colorbis);
+  border-color: var(--th-cl-acc2);
 }
 
 #fa-pinned-list a {
   flex: 1;
-  color: var(--colorfont);
+  color: var(--th-cl-font);
   text-decoration: none;
-  font: 12px var(--font-text);
+  font: 12px var(--fte1);
 }
 
 #fa-pinned-list a:hover {
-  color: var(--coloradd);
+  color: var(--th-cl-acc3);
 }
 
 .fa-remove-pin {
-  background: var(--colorimp);
-  color: var(--colorfont);
+  background: var(--th-cl-desc2);
+  color: var(--th-cl-font);
   border: 0;
   border-radius: 50%;
   width: 18px;
@@ -183,20 +183,20 @@
 
 .fa-pins-cats button,
 .fa-pin-cat-select {
-  background: var(--color02);
-  border: 1px solid var(--border);
-  color: var(--colorbis);
-  border-radius: var(--mainradius);
+  background: var(--th-cl-panelAlt);
+  border: 1px solid var(--th-cl-bord);
+  color: var(--th-cl-sub);
+  border-radius: var(--th-radius-md);
   padding: 4px 9px;
-  font: 10px var(--font-text);
+  font: 10px var(--fte1);
   text-transform: uppercase;
   cursor: pointer;
 }
 
 .fa-pins-cats button.active,
 .fa-pins-cats button:hover {
-  background: var(--gradient);
-  color: var(--colorfont);
+  background: var(--th-grad-chip);
+  color: var(--th-cl-font);
 }
 
 .fa-pin-item {
@@ -212,7 +212,7 @@
   height: 38px;
   border-radius: 50%;
   object-fit: cover;
-  outline: 1px solid var(--border);
+  outline: 1px solid var(--th-cl-bord);
   outline-offset: 4px;
 }
 
@@ -232,56 +232,56 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  font: 10px var(--font-text);
-  color: var(--colorbis);
+  font: 10px var(--fte1);
+  color: var(--th-cl-sub);
 }
 
 .fa-pin-forum {
-  color: var(--coloradd);
+  color: var(--th-cl-acc3);
 }
 
 .fa-pin-last {
-  border: 1px solid var(--border);
-  border-radius: var(--mainradius);
-  color: var(--colorbis);
+  border: 1px solid var(--th-cl-bord);
+  border-radius: var(--th-radius-md);
+  color: var(--th-cl-sub);
   padding: 2px 7px;
 }
 
 #fa-topic-fav-button {
-    background: var(--bgcolor) !important;
+    background: var(--th-cl-bg) !important;
     position: relative !important;
     display: inline-flex !important;
     align-items: center !important;
     gap: 6px !important;
-    border: 1px solid rgb(255 255 255 / 0.08) !important;
+    border: 1px solid var(--th-cl-bord) !important;
     outline: none !important;
     margin: 6px 6px 0 0 !important;
     cursor: pointer !important;
     padding: 6px 12px !important;
-    border-radius: var(--mainradius) !important;
-    color: var(--colorfont) !important;
-    font: 13px var(--font-h4) !important;
+    border-radius: var(--th-radius-md) !important;
+    color: var(--th-cl-font) !important;
+    font: 13px var(--fst3) !important;
     transition: 0.25s ease !important;
 }
 
 #fa-topic-fav-button:hover,
 #fa-topic-fav-button.is-faved {
-  background: var(--gradient);
-  color: var(--colorfont);
-  box-shadow: 0 0 18px rgb(255 255 255 / .08);
+  background: var(--th-grad-chip);
+  color: var(--th-cl-font);
+  box-shadow: 0 0 18px var(--th-cl-shadow);
 }
 
 .fa-pin-new {
-  background: var(--colorimp);
-  color: var(--colorfont);
+  background: var(--th-cl-desc2);
+  color: var(--th-cl-font);
   border-radius: 999px;
   padding: 2px 7px;
-  font: 9px var(--font-text);
+  font: 9px var(--fte1);
   text-transform: uppercase;
 }
 
 .fa-pin-item.is-new {
-  border-color: var(--colorimp) !important;
+  border-color: var(--th-cl-desc2) !important;
 }
 
 .fa-pin-avatar-wrap {
@@ -319,7 +319,7 @@
   height: 38px;
   border-radius: 50%;
   object-fit: cover;
-  outline: 1px solid var(--border);
+  outline: 1px solid var(--th-cl-bord);
   outline-offset: 4px;
 }
 #fa-topic-fav-button svg {
