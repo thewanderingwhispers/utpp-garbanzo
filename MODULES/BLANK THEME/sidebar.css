@@ -3,7 +3,7 @@
   top: 0;
   bottom: 0;
   right: 0;
-  background: rgb(10 10 10 / .55);
+  background: var(--th-cl-panel);
   backdrop-filter: blur(6px);
   width: max-content;
   display: flex;
@@ -40,9 +40,9 @@
 /* Lien de renvoi haut/bas */
 .sidebar_bottom > a {
   padding: 5px 0px;
-  border-radius: var(--radiusbis);
-  background: var(--color02);
-  color: var(--colorfont);
+  border-radius: var(--th-radius-md);
+  background: var(--th-cl-panelAlt);
+  color: var(--th-cl-font);
   height: 20px;
   width: 45px;
   margin: 0 auto;
