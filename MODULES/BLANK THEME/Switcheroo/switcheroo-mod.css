@@ -1,5 +1,5 @@
 .switcheroo {
-  color: var(--colorfont);
+  color: var(--th-cl-font);
 }
 
 .switcheroo__squircles {
@@ -17,18 +17,18 @@
 .switcheroo__squircle {
   position: relative;
   place-items: center;
-  background-color: var(--border);
+  background-color: var(--th-cl-bord);
   width: 35px;
   height: 35px;
-  border-radius: var(--mainradius);
+  border-radius: var(--th-radius-md);
   cursor: pointer;
   outline-offset: 5px;
-  outline: 1px solid var(--bordercolor);
-  transition: border-radius 128ms var(--ease) !important;
+  outline: 1px solid var(--th-cl-bordDark);
+  transition: border-radius var(--th-trans-fast) !important;
 }
 
 .switcheroo__squircle:hover {
-  outline-color: var(--coloradd);
+  outline-color: var(--th-cl-acc3);
   border-radius: 8px;
 }
 
@@ -46,22 +46,22 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  border-radius: var(--mainradius);
-  transition: border-radius 128ms var(--ease);
+  border-radius: var(--th-radius-md);
+  transition: border-radius var(--th-trans-fast);
   position: relative;
 }
 
 .switcheroo__squircle.active,
 .switcheroo__squircle.active img {
-  outline-color: var(--colorfont);
+  outline-color: var(--th-cl-font);
   cursor: default;
 }
 
 /* ----- AJOUTER UN COMPTE ----- */
 
 .switcheroo__squircle--button {
-  transition: border-radius 128ms var(--ease);
-  color: var(--colorfont);
+  transition: border-radius var(--th-trans-fast);
+  color: var(--th-cl-font);
   padding: 8px 0;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .switcheroo__squircle--button:hover {
-  color: var(--coloradd);
+  color: var(--th-cl-acc3);
   transition:0.5s;
   border-radius:50px;
 }
@@ -85,12 +85,12 @@
   top: -7px;
   right: -7px;
   border-radius: 50%;
-  background-color: var(--coloradd);
+  background-color: var(--th-cl-acc3);
   transform: scale(0);
   opacity: 1;
-  transition: transform 128ms var(--ease), opacity 64ms var(--ease);
+  transition: transform var(--th-trans-fast), opacity var(--th-trans-fast);
   cursor: pointer;
-  color: var(--colorfont);
+  color: var(--th-cl-font);
   line-height: 0;
 }
 
@@ -108,16 +108,16 @@
   left: auto;
   transform: translateY(-50%) scale(0.98);
   transform-origin: right;
-  border: 1px var(--border) solid;
-  border-radius: var(--mainradius);
+  border: 1px var(--th-cl-bord) solid;
+  border-radius: var(--th-radius-md);
   width: max-content;
   height: 26px;
-  background-color: var(--bgcolor);
+  background-color: var(--th-cl-bg);
   padding: 0.3rem 1rem;
-  color: var(--colorfont);
+  color: var(--th-cl-font);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 120ms ease, transform 120ms ease;
+  transition: opacity var(--th-trans-fast), transform var(--th-trans-fast);
 }
 
 .switcheroo__popper::before {
@@ -128,9 +128,9 @@
   right: -6px;
   top: 50%;
   transform: translateY(-50%) rotate(45deg);
-  background-color: var(--bgcolor);
-  border-right: 1px solid var(--border);
-  border-top: 1px solid var(--border);
+  background-color: var(--th-cl-bg);
+  border-right: 1px solid var(--th-cl-bord);
+  border-top: 1px solid var(--th-cl-bord);
   border-radius: 2px;
 }
 
@@ -156,7 +156,7 @@
   width: 100%;
   height: 100%;
   transition: 0.2s opacity ease;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--th-cl-shadowStrong);
 }
 
 .monomer-modal {
@@ -170,9 +170,9 @@
   transition: 0.2s opacity ease;
   transform: translate(-50%, -50%);
   border-radius: 10px;
-  background: var(--bgcolor);
+  background: var(--th-cl-bg);
   padding: 50px;
-  box-shadow: var(--shadowBox);
+  box-shadow: 0 8px 24px var(--th-cl-shadow);
 }
 
 .switcheroo__form-row {
@@ -193,8 +193,8 @@
   padding: 6px !important;
   border-radius: 4px;
   width: 100%;
-  background-color: var(--color02);
-  color: var(--colorfont);
+  background-color: var(--th-cl-panelAlt);
+  color: var(--th-cl-font);
   cursor: text;
 }
 
@@ -207,15 +207,15 @@
   text-transform: uppercase;
   font-size: 14px;
   align-self: center;
-  background-color: var(--color03);
+  background-color: var(--th-cl-card);
   cursor: pointer;
-  color: var(--colorfont);
+  color: var(--th-cl-font);
   font-weight: 600;
   margin-top: 10px;
 }
 
 .switcheroo__form-button:hover {
-  background: var(--colornews);
+  background: var(--th-cl-acc3);
 }
 
 .monomer-modal.monomer-open,
@@ -232,15 +232,15 @@
   top: 5px;
   right: 5px;
   cursor: pointer;
-  color: var(--colorfont);
+  color: var(--th-cl-font);
   border: 0;
   outline: none;
-  background: var(--bgcolor);
+  background: var(--th-cl-bg);
   border-radius: 4px;
   padding: 0;
   padding-left: 1px;
 }
 
 .monomer-close:hover {
-  background: var(--colorfont);
+  background: var(--th-cl-font);
   }
