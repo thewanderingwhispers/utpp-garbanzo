@@ -1,7 +1,3 @@
-html:not(.fa-member) .member-only-frqcy {
-  display: none !important;
-}
-
 #frame_chatbox,
 #chatbox_popup {
   position: fixed !important;
