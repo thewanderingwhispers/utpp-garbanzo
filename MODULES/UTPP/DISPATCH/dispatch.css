@@ -376,6 +376,7 @@
   font-size: 12px;
   line-height: 1.45;
 }
+
 #rpg-panel-button {
   position: relative;
   width: 45px;
@@ -390,10 +391,18 @@
   cursor: pointer;
   transition: .25s;
 }
+
+#rpg-panel-button:hover {
+  transform: scale(1.08) rotate(-6deg);
+  background: var(--th-grad-chip);
+  color: var(--th-cl-font);
+}
+
 #rpg-panel-button svg {
   width: 21px;
   height: 21px;
 }
+
 #rpg-panel-button.is-active,
 [data-rpg-panel-toggle].is-active {
   transform: translateY(-1px);
