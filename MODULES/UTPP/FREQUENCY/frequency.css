@@ -57,12 +57,25 @@
   --frqcy-transition: var(--th-trans-fast, 0.18s ease);
 }
 
-/* Bouton FRQCY dans la sidebar */
 #frqcy-toggle {
   position: relative;
-  display: inline-grid;
+  width: 45px;
+  height: 45px;
+  margin: 0 auto;
+  border: 1px solid var(--th-cl-bord);
+  border-radius: var(--th-radius-md);
+  background: var(--th-cl-panelAlt);
+  color: var(--th-cl-font);
+  display: grid;
   place-items: center;
   cursor: pointer;
+  transition: .25s;
+}
+
+#frqcy-toggle:hover {
+  transform: scale(1.08) rotate(-6deg);
+  background: var(--th-grad-chip);
+  color: var(--th-cl-font);
 }
 
 #frqcy-toggle.is-active {
@@ -73,6 +86,8 @@
 #frqcy-toggle svg,
 #frqcy-toggle i {
   pointer-events: none;
+  width: 21px;
+  height: 21px;
 }
 
 #frqcy-toggle svg {
