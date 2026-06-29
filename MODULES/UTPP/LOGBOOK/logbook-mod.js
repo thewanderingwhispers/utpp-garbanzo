@@ -11,6 +11,8 @@
           status: "Disponible",
           avatar: ""
         },
+        deck: [],
+        sparks: [],
         notepad: ""
       }
     }
@@ -42,6 +44,8 @@
           status: saved.passport?.status || "Disponible",
           avatar: saved.passport?.avatar || ""
         },
+        deck: Array.isArray(saved.deck) ? saved.deck : [],
+        sparks: Array.isArray(saved.sparks) ? saved.sparks : [],
         notepad: saved.notepad || ""
       };
     } catch (error) {
@@ -51,6 +55,8 @@
           status: "Disponible",
           avatar: ""
         },
+        deck: [],
+        sparks: [],
         notepad: ""
       };
     }
@@ -66,6 +72,11 @@
 
   function createInterface() {
     if (document.querySelector("#logbook-root")) return;
+
+    const savedAvatar = LOGBOOK.state.data.passport.avatar;
+    const avatarHTML = savedAvatar
+      ? `<img src="${escapeHTML(savedAvatar)}" alt="${escapeHTML(LOGBOOK.state.username)}">`
+      : escapeHTML(getInitials(LOGBOOK.state.username));
 
     document.body.insertAdjacentHTML("beforeend", `
       <section id="logbook-root" class="logbook-closed" aria-hidden="true">
@@ -90,7 +101,7 @@
             <div class="logbook-card">
               <div class="logbook-passport">
                 <div class="logbook-avatar" id="logbook-avatar">
-                  ${escapeHTML(getInitials(LOGBOOK.state.username))}
+                  ${avatarHTML}
                 </div>
 
                 <div>
@@ -125,14 +136,33 @@
                 <div class="logbook-title">Ce qui attend une réponse</div>
               </div>
 
-              <div class="logbook-text">
-                Ici, on codera la file d’attente RP : titre, lien, note, priorité et case “à mon tour”.
-              </div>
+              <form id="logbook-deck-form" class="logbook-form">
+                <div class="logbook-grid">
+                  <input id="logbook-deck-title" type="text" placeholder="Titre du RP" required>
+
+                  <select id="logbook-deck-priority">
+                    <option value="low">Basse</option>
+                    <option value="normal" selected>Normale</option>
+                    <option value="urgent">Urgente</option>
+                  </select>
+                </div>
+
+                <input id="logbook-deck-url" type="url" placeholder="Lien du sujet">
+
+                <textarea id="logbook-deck-note" placeholder="Petite note : contexte, partenaire, détail à ne pas oublier..."></textarea>
+
+                <div class="logbook-actions">
+                  <label class="logbook-check">
+                    <input id="logbook-deck-turn" type="checkbox">
+                    <span>À mon tour</span>
+                  </label>
+
+                  <button class="logbook-submit" type="submit">Ajouter</button>
+                </div>
+              </form>
             </div>
 
-            <div class="logbook-placeholder">
-              Étape suivante : création des cartes RP avec ajout, suppression, priorité et sauvegarde automatique.
-            </div>
+            <div id="logbook-deck-list" class="logbook-list"></div>
           </section>
 
           <section class="logbook-panel" data-logbook-panel="sparks">
@@ -148,7 +178,7 @@
             </div>
 
             <div class="logbook-placeholder">
-              Étape suivante : fiches d’envies avec cible, type, statut et champ libre.
+              Prochaine étape : fiches d’envies avec cible, type, statut et champ libre.
             </div>
           </section>
 
@@ -171,6 +201,7 @@
 
     bindEvents();
     fillFields();
+    renderDeck();
     loadAvatar();
 
     if (window.lucide && typeof window.lucide.createIcons === "function") {
@@ -184,6 +215,8 @@
     const quote = document.querySelector("#logbook-quote");
     const status = document.querySelector("#logbook-status");
     const notepad = document.querySelector("#logbook-notepad");
+    const deckForm = document.querySelector("#logbook-deck-form");
+    const deckList = document.querySelector("#logbook-deck-list");
 
     if (toggle) {
       toggle.addEventListener("click", toggleLogbook);
@@ -227,6 +260,15 @@
         saveData();
       });
     }
+
+    if (deckForm) {
+      deckForm.addEventListener("submit", handleDeckSubmit);
+    }
+
+    if (deckList) {
+      deckList.addEventListener("click", handleDeckClick);
+      deckList.addEventListener("change", handleDeckChange);
+    }
   }
 
   function fillFields() {
@@ -245,6 +287,135 @@
     if (notepad) {
       notepad.value = LOGBOOK.state.data.notepad || "";
     }
+  }
+
+  function handleDeckSubmit(event) {
+    event.preventDefault();
+
+    const title = document.querySelector("#logbook-deck-title");
+    const url = document.querySelector("#logbook-deck-url");
+    const note = document.querySelector("#logbook-deck-note");
+    const priority = document.querySelector("#logbook-deck-priority");
+    const turn = document.querySelector("#logbook-deck-turn");
+
+    if (!title || !title.value.trim()) return;
+
+    const item = {
+      id: createId(),
+      title: title.value.trim(),
+      url: normalizeUrl(url?.value || ""),
+      note: note?.value.trim() || "",
+      priority: priority?.value || "normal",
+      myTurn: !!turn?.checked,
+      createdAt: Date.now()
+    };
+
+    LOGBOOK.state.data.deck.unshift(item);
+    saveData();
+    renderDeck();
+
+    title.value = "";
+    if (url) url.value = "";
+    if (note) note.value = "";
+    if (priority) priority.value = "normal";
+    if (turn) turn.checked = false;
+
+    title.focus();
+  }
+
+  function handleDeckClick(event) {
+    const deleteButton = event.target.closest("[data-logbook-deck-delete]");
+
+    if (!deleteButton) return;
+
+    const id = deleteButton.dataset.logbookDeckDelete;
+
+    LOGBOOK.state.data.deck = LOGBOOK.state.data.deck.filter(function (item) {
+      return item.id !== id;
+    });
+
+    saveData();
+    renderDeck();
+  }
+
+  function handleDeckChange(event) {
+    const turnInput = event.target.closest("[data-logbook-deck-turn]");
+
+    if (!turnInput) return;
+
+    const id = turnInput.dataset.logbookDeckTurn;
+    const item = LOGBOOK.state.data.deck.find(function (entry) {
+      return entry.id === id;
+    });
+
+    if (!item) return;
+
+    item.myTurn = turnInput.checked;
+
+    saveData();
+    renderDeck();
+  }
+
+  function renderDeck() {
+    const list = document.querySelector("#logbook-deck-list");
+    if (!list) return;
+
+    const items = LOGBOOK.state.data.deck || [];
+
+    if (!items.length) {
+      list.innerHTML = `
+        <div class="logbook-placeholder">
+          Rien dans la file pour le moment. Ajoutez un RP à surveiller, une réponse à faire, ou un sujet à ne pas oublier.
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = items.map(function (item) {
+      const priorityLabel = getPriorityLabel(item.priority);
+      const titleHTML = item.url
+        ? `<a class="logbook-entry-title" href="${escapeHTML(item.url)}">${escapeHTML(item.title)}</a>`
+        : `<div class="logbook-entry-title">${escapeHTML(item.title)}</div>`;
+
+      return `
+        <article class="logbook-entry ${item.myTurn ? "is-turn" : ""}">
+          <div class="logbook-entry-top">
+            ${titleHTML}
+
+            <button class="logbook-delete" type="button" data-logbook-deck-delete="${escapeHTML(item.id)}" aria-label="Supprimer ce RP">×</button>
+          </div>
+
+          ${item.note ? `<div class="logbook-entry-note">${escapeHTML(item.note)}</div>` : ""}
+
+          <div class="logbook-entry-meta">
+            <span class="logbook-priority" data-priority="${escapeHTML(item.priority)}">${escapeHTML(priorityLabel)}</span>
+            ${item.myTurn ? `<span class="logbook-turn-chip">À mon tour</span>` : ""}
+          </div>
+
+          <div class="logbook-entry-footer">
+            <label class="logbook-entry-check">
+              <input type="checkbox" data-logbook-deck-turn="${escapeHTML(item.id)}" ${item.myTurn ? "checked" : ""}>
+              <span>À mon tour</span>
+            </label>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function getPriorityLabel(priority) {
+    if (priority === "low") return "Basse";
+    if (priority === "urgent") return "Urgente";
+    return "Normale";
+  }
+
+  function normalizeUrl(url) {
+    const clean = String(url || "").trim();
+
+    if (!clean) return "";
+    if (/^(https?:|\/|#)/i.test(clean)) return clean;
+
+    return `https://${clean}`;
   }
 
   function toggleLogbook() {
@@ -309,6 +480,8 @@
 
     if (!avatarBox || userId === "guest") return;
 
+    if (LOGBOOK.state.data.passport.avatar) return;
+
     fetch(`/u${encodeURIComponent(userId)}`)
       .then(function (response) {
         return response.text();
@@ -336,6 +509,10 @@
       .catch(function () {
         avatarBox.textContent = getInitials(username);
       });
+  }
+
+  function createId() {
+    return `logbook-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   }
 
   function getInitials(name) {
