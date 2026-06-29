@@ -5,7 +5,7 @@
 
 .rpg-panel {
   position: fixed;
-  top: 120px;
+  top: 20px;
   right: 78px;
   z-index: 9999;
   width: min(var(--th-panel-width), calc(100vw - 32px));
