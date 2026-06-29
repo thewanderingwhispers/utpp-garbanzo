@@ -9,7 +9,7 @@
   pointer-events: none !important;
 }
 
-/* #frqcy-root,
+#frqcy-root,
 #frqcy-toggle {
   --frqcy-font: var(--th-font-main, Arial, sans-serif);
 
@@ -55,8 +55,9 @@
   --frqcy-radius-lg: 28px;
 
   --frqcy-transition: var(--th-trans-fast, 0.18s ease);
-} */
+}
 
+/* Bouton FRQCY dans la sidebar */
 #frqcy-toggle {
   position: relative;
   display: inline-grid;
@@ -67,6 +68,16 @@
 #frqcy-toggle.is-active {
   transform: translateY(-1px);
   filter: brightness(1.12);
+}
+
+#frqcy-toggle svg,
+#frqcy-toggle i {
+  pointer-events: none;
+}
+
+#frqcy-toggle svg {
+  width: 18px;
+  height: 18px;
 }
 
 #frqcy-toggle #frqcy-badge {
@@ -107,6 +118,19 @@
   color: #111 !important;
 }
 
+@keyframes frqcyPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.28);
+    opacity: .65;
+  }
+}
+
+/* Fenêtre FRQCY */
 #frqcy-root {
   position: fixed;
   right: 32px;
@@ -787,18 +811,8 @@
   color: #111;
 }
 
-
-/* =========================
-   Mobile
-   ========================= */
-
+/* Mobile */
 @media (max-width: 760px) {
-  #frqcy-toggle {
-    right: 16px;
-    bottom: 16px;
-    padding: 13px 18px;
-  }
-
   #frqcy-root {
     right: 12px;
     left: 12px;
