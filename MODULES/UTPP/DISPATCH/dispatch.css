@@ -109,7 +109,6 @@
   max-height: calc(100vh - 180px);
   overflow: auto;
   padding: 12px;
-  scrollbar-width: thin;
 }
 
 .rpg-panel__module {
