@@ -1,22 +1,28 @@
 (function () {
   const LOGBOOK = {
     storageBase: "logbook-v1",
+
     state: {
       userId: "guest",
       username: "Personnage",
       activeTab: "passport",
+
       data: {
         passport: {
           quote: "",
           status: "Disponible",
           avatar: ""
         },
+
         deck: [],
         sparks: [],
         notepad: ""
       }
     }
   };
+
+  let editingDeckId = null;
+  let editingSparkId = null;
 
   function detectUser() {
     const data = window._userdata || {};
@@ -31,7 +37,21 @@
   }
 
   function getStorageKey() {
-    return `${LOGBOOK.storageBase}-${LOGBOOK.state.userId}`;
+    return LOGBOOK.storageBase + "-" + LOGBOOK.state.userId;
+  }
+
+  function getDefaultData() {
+    return {
+      passport: {
+        quote: "",
+        status: "Disponible",
+        avatar: ""
+      },
+
+      deck: [],
+      sparks: [],
+      notepad: ""
+    };
   }
 
   function loadData() {
@@ -40,25 +60,17 @@
 
       LOGBOOK.state.data = {
         passport: {
-          quote: saved.passport?.quote || "",
-          status: saved.passport?.status || "Disponible",
-          avatar: saved.passport?.avatar || ""
+          quote: saved.passport && saved.passport.quote ? saved.passport.quote : "",
+          status: saved.passport && saved.passport.status ? saved.passport.status : "Disponible",
+          avatar: saved.passport && saved.passport.avatar ? saved.passport.avatar : ""
         },
+
         deck: Array.isArray(saved.deck) ? saved.deck : [],
         sparks: Array.isArray(saved.sparks) ? saved.sparks : [],
         notepad: saved.notepad || ""
       };
     } catch (error) {
-      LOGBOOK.state.data = {
-        passport: {
-          quote: "",
-          status: "Disponible",
-          avatar: ""
-        },
-        deck: [],
-        sparks: [],
-        notepad: ""
-      };
+      LOGBOOK.state.data = getDefaultData();
     }
   }
 
@@ -68,14 +80,17 @@
     } catch (error) {
       /* localStorage indisponible : on ignore proprement */
     }
+
+    updateLogbookCount();
   }
 
   function createInterface() {
     if (document.querySelector("#logbook-root")) return;
 
     const savedAvatar = LOGBOOK.state.data.passport.avatar;
+
     const avatarHTML = savedAvatar
-      ? `<img src="${escapeHTML(savedAvatar)}" alt="${escapeHTML(LOGBOOK.state.username)}">`
+      ? '<img src="' + escapeHTML(savedAvatar) + '" alt="' + escapeHTML(LOGBOOK.state.username) + '">'
       : escapeHTML(getInitials(LOGBOOK.state.username));
 
     document.body.insertAdjacentHTML("beforeend", `
@@ -157,7 +172,10 @@
                     <span>À mon tour</span>
                   </label>
 
-                  <button class="logbook-submit" type="submit">Ajouter</button>
+                  <div class="logbook-form-buttons">
+                    <button id="logbook-deck-cancel" class="logbook-secondary" type="button" hidden>Annuler</button>
+                    <button id="logbook-deck-submit" class="logbook-submit" type="submit">Ajouter</button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -196,7 +214,11 @@
 
                 <div class="logbook-actions">
                   <span class="logbook-check">Une étincelle à ne pas perdre.</span>
-                  <button class="logbook-submit" type="submit">Ajouter</button>
+
+                  <div class="logbook-form-buttons">
+                    <button id="logbook-sparks-cancel" class="logbook-secondary" type="button" hidden>Annuler</button>
+                    <button id="logbook-sparks-submit" class="logbook-submit" type="submit">Ajouter</button>
+                  </div>
                 </div>
               </form>
             </div>
@@ -226,6 +248,7 @@
     renderDeck();
     renderSparks();
     loadAvatar();
+    updateLogbookCount();
 
     if (window.lucide && typeof window.lucide.createIcons === "function") {
       window.lucide.createIcons();
@@ -235,15 +258,18 @@
   function bindEvents() {
     const toggle = document.querySelector("#logbook-toggle");
     const close = document.querySelector("#logbook-close");
+
     const quote = document.querySelector("#logbook-quote");
     const status = document.querySelector("#logbook-status");
     const notepad = document.querySelector("#logbook-notepad");
 
     const deckForm = document.querySelector("#logbook-deck-form");
     const deckList = document.querySelector("#logbook-deck-list");
+    const deckCancel = document.querySelector("#logbook-deck-cancel");
 
     const sparksForm = document.querySelector("#logbook-sparks-form");
     const sparksList = document.querySelector("#logbook-sparks-list");
+    const sparksCancel = document.querySelector("#logbook-sparks-cancel");
 
     if (toggle) {
       toggle.addEventListener("click", toggleLogbook);
@@ -297,6 +323,10 @@
       deckList.addEventListener("change", handleDeckChange);
     }
 
+    if (deckCancel) {
+      deckCancel.addEventListener("click", resetDeckForm);
+    }
+
     if (sparksForm) {
       sparksForm.addEventListener("submit", handleSparksSubmit);
     }
@@ -304,6 +334,10 @@
     if (sparksList) {
       sparksList.addEventListener("click", handleSparksClick);
       sparksList.addEventListener("change", handleSparksChange);
+    }
+
+    if (sparksCancel) {
+      sparksCancel.addEventListener("click", resetSparksForm);
     }
   }
 
@@ -325,6 +359,36 @@
     }
   }
 
+  function updateLogbookCount() {
+    const toggle = document.querySelector("#logbook-toggle");
+    const count = document.querySelector("#logbook-count");
+
+    if (!toggle || !count) return;
+
+    const deck = LOGBOOK.state.data.deck || [];
+
+    const todoCount = deck.filter(function (item) {
+      return item.myTurn || item.priority === "urgent";
+    }).length;
+
+    if (todoCount > 0) {
+      count.textContent = todoCount > 99 ? "99+" : String(todoCount);
+      toggle.classList.add("logbook-has-todo");
+      toggle.setAttribute(
+        "title",
+        "Logbook — " + todoCount + " chose" + (todoCount > 1 ? "s" : "") + " à faire"
+      );
+    } else {
+      count.textContent = "";
+      toggle.classList.remove("logbook-has-todo");
+      toggle.setAttribute("title", "Logbook");
+    }
+  }
+
+  /* =========================
+     ON DECK
+     ========================= */
+
   function handleDeckSubmit(event) {
     event.preventDefault();
 
@@ -336,35 +400,57 @@
 
     if (!title || !title.value.trim()) return;
 
-    const item = {
-      id: createId(),
+    const payload = {
       title: title.value.trim(),
-      url: normalizeUrl(url?.value || ""),
-      note: note?.value.trim() || "",
-      priority: priority?.value || "normal",
-      myTurn: !!turn?.checked,
-      createdAt: Date.now()
+      url: normalizeUrl(url ? url.value : ""),
+      note: note ? note.value.trim() : "",
+      priority: priority ? priority.value : "normal",
+      myTurn: turn ? !!turn.checked : false,
+      updatedAt: Date.now()
     };
 
-    LOGBOOK.state.data.deck.unshift(item);
+    if (editingDeckId) {
+      const item = LOGBOOK.state.data.deck.find(function (entry) {
+        return entry.id === editingDeckId;
+      });
+
+      if (item) {
+        Object.assign(item, payload);
+      }
+    } else {
+      LOGBOOK.state.data.deck.unshift({
+        id: createId(),
+        title: payload.title,
+        url: payload.url,
+        note: payload.note,
+        priority: payload.priority,
+        myTurn: payload.myTurn,
+        createdAt: Date.now(),
+        updatedAt: payload.updatedAt
+      });
+    }
+
     saveData();
     renderDeck();
-
-    title.value = "";
-    if (url) url.value = "";
-    if (note) note.value = "";
-    if (priority) priority.value = "normal";
-    if (turn) turn.checked = false;
-
-    title.focus();
+    resetDeckForm();
   }
 
   function handleDeckClick(event) {
+    const editButton = event.target.closest("[data-logbook-deck-edit]");
     const deleteButton = event.target.closest("[data-logbook-deck-delete]");
+
+    if (editButton) {
+      startEditDeck(editButton.dataset.logbookDeckEdit);
+      return;
+    }
 
     if (!deleteButton) return;
 
     const id = deleteButton.dataset.logbookDeckDelete;
+
+    if (editingDeckId === id) {
+      resetDeckForm();
+    }
 
     LOGBOOK.state.data.deck = LOGBOOK.state.data.deck.filter(function (item) {
       return item.id !== id;
@@ -380,6 +466,7 @@
     if (!turnInput) return;
 
     const id = turnInput.dataset.logbookDeckTurn;
+
     const item = LOGBOOK.state.data.deck.find(function (entry) {
       return entry.id === id;
     });
@@ -387,6 +474,7 @@
     if (!item) return;
 
     item.myTurn = turnInput.checked;
+    item.updatedAt = Date.now();
 
     saveData();
     renderDeck();
@@ -404,28 +492,34 @@
           Rien dans la file pour le moment. Ajoutez un RP à surveiller, une réponse à faire, ou un sujet à ne pas oublier.
         </div>
       `;
+
+      updateLogbookCount();
       return;
     }
 
     list.innerHTML = items.map(function (item) {
       const priorityLabel = getPriorityLabel(item.priority);
+
       const titleHTML = item.url
-        ? `<a class="logbook-entry-title" href="${escapeHTML(item.url)}">${escapeHTML(item.title)}</a>`
-        : `<div class="logbook-entry-title">${escapeHTML(item.title)}</div>`;
+        ? '<a class="logbook-entry-title" href="' + escapeHTML(item.url) + '">' + escapeHTML(item.title) + '</a>'
+        : '<div class="logbook-entry-title">' + escapeHTML(item.title) + '</div>';
 
       return `
         <article class="logbook-entry ${item.myTurn ? "is-turn" : ""}">
           <div class="logbook-entry-top">
             ${titleHTML}
 
-            <button class="logbook-delete" type="button" data-logbook-deck-delete="${escapeHTML(item.id)}" aria-label="Supprimer ce RP">×</button>
+            <div class="logbook-entry-buttons">
+              <button class="logbook-edit" type="button" data-logbook-deck-edit="${escapeHTML(item.id)}">Modifier</button>
+              <button class="logbook-delete" type="button" data-logbook-deck-delete="${escapeHTML(item.id)}" aria-label="Supprimer ce RP">×</button>
+            </div>
           </div>
 
-          ${item.note ? `<div class="logbook-entry-note">${escapeHTML(item.note)}</div>` : ""}
+          ${item.note ? '<div class="logbook-entry-note">' + escapeHTML(item.note) + '</div>' : ""}
 
           <div class="logbook-entry-meta">
             <span class="logbook-priority" data-priority="${escapeHTML(item.priority)}">${escapeHTML(priorityLabel)}</span>
-            ${item.myTurn ? `<span class="logbook-turn-chip">À mon tour</span>` : ""}
+            ${item.myTurn ? '<span class="logbook-turn-chip">À mon tour</span>' : ""}
           </div>
 
           <div class="logbook-entry-footer">
@@ -437,7 +531,67 @@
         </article>
       `;
     }).join("");
+
+    updateLogbookCount();
   }
+
+  function startEditDeck(id) {
+    const item = LOGBOOK.state.data.deck.find(function (entry) {
+      return entry.id === id;
+    });
+
+    if (!item) return;
+
+    editingDeckId = id;
+
+    const title = document.querySelector("#logbook-deck-title");
+    const url = document.querySelector("#logbook-deck-url");
+    const note = document.querySelector("#logbook-deck-note");
+    const priority = document.querySelector("#logbook-deck-priority");
+    const turn = document.querySelector("#logbook-deck-turn");
+    const submit = document.querySelector("#logbook-deck-submit");
+    const cancel = document.querySelector("#logbook-deck-cancel");
+
+    if (title) title.value = item.title || "";
+    if (url) url.value = item.url || "";
+    if (note) note.value = item.note || "";
+    if (priority) priority.value = item.priority || "normal";
+    if (turn) turn.checked = !!item.myTurn;
+
+    if (submit) submit.textContent = "Enregistrer";
+    if (cancel) cancel.hidden = false;
+
+    switchTab("deck");
+
+    if (title) {
+      title.focus();
+    }
+  }
+
+  function resetDeckForm() {
+    editingDeckId = null;
+
+    const title = document.querySelector("#logbook-deck-title");
+    const url = document.querySelector("#logbook-deck-url");
+    const note = document.querySelector("#logbook-deck-note");
+    const priority = document.querySelector("#logbook-deck-priority");
+    const turn = document.querySelector("#logbook-deck-turn");
+    const submit = document.querySelector("#logbook-deck-submit");
+    const cancel = document.querySelector("#logbook-deck-cancel");
+
+    if (title) title.value = "";
+    if (url) url.value = "";
+    if (note) note.value = "";
+    if (priority) priority.value = "normal";
+    if (turn) turn.checked = false;
+
+    if (submit) submit.textContent = "Ajouter";
+    if (cancel) cancel.hidden = true;
+  }
+
+  /* =========================
+     SPARKS
+     ========================= */
 
   function handleSparksSubmit(event) {
     event.preventDefault();
@@ -447,38 +601,60 @@
     const status = document.querySelector("#logbook-sparks-status");
     const note = document.querySelector("#logbook-sparks-note");
 
-    const targetValue = target?.value.trim() || "";
-    const noteValue = note?.value.trim() || "";
+    const targetValue = target ? target.value.trim() : "";
+    const noteValue = note ? note.value.trim() : "";
 
     if (!targetValue && !noteValue) return;
 
-    const item = {
-      id: createId(),
+    const payload = {
       target: targetValue,
-      type: type?.value || "vague",
-      status: status?.value || "a-proposer",
+      type: type ? type.value : "vague",
+      status: status ? status.value : "a-proposer",
       note: noteValue,
-      createdAt: Date.now()
+      updatedAt: Date.now()
     };
 
-    LOGBOOK.state.data.sparks.unshift(item);
+    if (editingSparkId) {
+      const item = LOGBOOK.state.data.sparks.find(function (entry) {
+        return entry.id === editingSparkId;
+      });
+
+      if (item) {
+        Object.assign(item, payload);
+      }
+    } else {
+      LOGBOOK.state.data.sparks.unshift({
+        id: createId(),
+        target: payload.target,
+        type: payload.type,
+        status: payload.status,
+        note: payload.note,
+        createdAt: Date.now(),
+        updatedAt: payload.updatedAt
+      });
+    }
+
     saveData();
     renderSparks();
-
-    if (target) target.value = "";
-    if (type) type.value = "lien";
-    if (status) status.value = "a-proposer";
-    if (note) note.value = "";
-
-    if (target) target.focus();
+    resetSparksForm();
   }
 
   function handleSparksClick(event) {
+    const editButton = event.target.closest("[data-logbook-spark-edit]");
     const deleteButton = event.target.closest("[data-logbook-spark-delete]");
+
+    if (editButton) {
+      startEditSpark(editButton.dataset.logbookSparkEdit);
+      return;
+    }
 
     if (!deleteButton) return;
 
     const id = deleteButton.dataset.logbookSparkDelete;
+
+    if (editingSparkId === id) {
+      resetSparksForm();
+    }
 
     LOGBOOK.state.data.sparks = LOGBOOK.state.data.sparks.filter(function (item) {
       return item.id !== id;
@@ -494,6 +670,7 @@
     if (!statusSelect) return;
 
     const id = statusSelect.dataset.logbookSparkStatus;
+
     const item = LOGBOOK.state.data.sparks.find(function (entry) {
       return entry.id === id;
     });
@@ -501,6 +678,7 @@
     if (!item) return;
 
     item.status = statusSelect.value;
+    item.updatedAt = Date.now();
 
     saveData();
     renderSparks();
@@ -518,6 +696,7 @@
           Aucune étincelle pour le moment. Notez une envie de lien, une idée de scène, un drama potentiel ou une évolution à proposer.
         </div>
       `;
+
       return;
     }
 
@@ -531,13 +710,16 @@
           <div class="logbook-entry-top">
             <div class="logbook-spark-target">
               ${escapeHTML(target)}
-              ${!item.target ? `<span> — libre</span>` : ""}
+              ${!item.target ? '<span> — libre</span>' : ""}
             </div>
 
-            <button class="logbook-delete" type="button" data-logbook-spark-delete="${escapeHTML(item.id)}" aria-label="Supprimer cette envie">×</button>
+            <div class="logbook-entry-buttons">
+              <button class="logbook-edit" type="button" data-logbook-spark-edit="${escapeHTML(item.id)}">Modifier</button>
+              <button class="logbook-delete" type="button" data-logbook-spark-delete="${escapeHTML(item.id)}" aria-label="Supprimer cette envie">×</button>
+            </div>
           </div>
 
-          ${item.note ? `<div class="logbook-entry-note">${escapeHTML(item.note)}</div>` : ""}
+          ${item.note ? '<div class="logbook-entry-note">' + escapeHTML(item.note) + '</div>' : ""}
 
           <div class="logbook-entry-meta">
             <span class="logbook-spark-type">${escapeHTML(typeLabel)}</span>
@@ -554,48 +736,59 @@
     }).join("");
   }
 
-  function getPriorityLabel(priority) {
-    if (priority === "low") return "Basse";
-    if (priority === "urgent") return "Urgente";
-    return "Normale";
+  function startEditSpark(id) {
+    const item = LOGBOOK.state.data.sparks.find(function (entry) {
+      return entry.id === id;
+    });
+
+    if (!item) return;
+
+    editingSparkId = id;
+
+    const target = document.querySelector("#logbook-sparks-target");
+    const type = document.querySelector("#logbook-sparks-type");
+    const status = document.querySelector("#logbook-sparks-status");
+    const note = document.querySelector("#logbook-sparks-note");
+    const submit = document.querySelector("#logbook-sparks-submit");
+    const cancel = document.querySelector("#logbook-sparks-cancel");
+
+    if (target) target.value = item.target || "";
+    if (type) type.value = item.type || "vague";
+    if (status) status.value = item.status || "a-proposer";
+    if (note) note.value = item.note || "";
+
+    if (submit) submit.textContent = "Enregistrer";
+    if (cancel) cancel.hidden = false;
+
+    switchTab("sparks");
+
+    if (target) {
+      target.focus();
+    }
   }
 
-  function getSparkTypeLabel(type) {
-    if (type === "lien") return "Lien";
-    if (type === "rp") return "RP";
-    if (type === "drama") return "Drama";
-    if (type === "evolution") return "Évolution";
-    return "Idée vague";
+  function resetSparksForm() {
+    editingSparkId = null;
+
+    const target = document.querySelector("#logbook-sparks-target");
+    const type = document.querySelector("#logbook-sparks-type");
+    const status = document.querySelector("#logbook-sparks-status");
+    const note = document.querySelector("#logbook-sparks-note");
+    const submit = document.querySelector("#logbook-sparks-submit");
+    const cancel = document.querySelector("#logbook-sparks-cancel");
+
+    if (target) target.value = "";
+    if (type) type.value = "lien";
+    if (status) status.value = "a-proposer";
+    if (note) note.value = "";
+
+    if (submit) submit.textContent = "Ajouter";
+    if (cancel) cancel.hidden = true;
   }
 
-  function getSparkStatusLabel(status) {
-    if (status === "propose") return "Proposé";
-    if (status === "valide") return "Validé";
-    if (status === "abandonne") return "Abandonné";
-    return "À proposer";
-  }
-
-  function getSparkStatusOptions(currentStatus) {
-    const statuses = [
-      ["a-proposer", "À proposer"],
-      ["propose", "Proposé"],
-      ["valide", "Validé"],
-      ["abandonne", "Abandonné"]
-    ];
-
-    return statuses.map(function ([value, label]) {
-      return `<option value="${escapeHTML(value)}" ${currentStatus === value ? "selected" : ""}>${escapeHTML(label)}</option>`;
-    }).join("");
-  }
-
-  function normalizeUrl(url) {
-    const clean = String(url || "").trim();
-
-    if (!clean) return "";
-    if (/^(https?:|\/|#)/i.test(clean)) return clean;
-
-    return `https://${clean}`;
-  }
+  /* =========================
+     OUVERTURE / FERMETURE
+     ========================= */
 
   function toggleLogbook() {
     if (isLogbookOpen()) {
@@ -652,6 +845,10 @@
     });
   }
 
+  /* =========================
+     AVATAR
+     ========================= */
+
   function loadAvatar() {
     const userId = LOGBOOK.state.userId;
     const username = LOGBOOK.state.username;
@@ -661,28 +858,28 @@
 
     if (LOGBOOK.state.data.passport.avatar) return;
 
-    fetch(`/u${encodeURIComponent(userId)}`)
+    fetch("/u" + encodeURIComponent(userId))
       .then(function (response) {
         return response.text();
       })
       .then(function (html) {
         const doc = new DOMParser().parseFromString(html, "text/html");
 
-        const avatar =
-          Array.from(doc.querySelectorAll("img"))
-            .find(function (img) {
-              return img.alt?.trim().toLowerCase() === username.trim().toLowerCase();
-            }) ||
-          Array.from(doc.querySelectorAll("img"))
-            .find(function (img) {
-              return /zupimages|servimg|imgfast|illiweb|2img/i.test(img.src) && !/icon_|logo/i.test(img.src);
-            });
+        const images = Array.from(doc.querySelectorAll("img"));
 
-        if (avatar?.src) {
+        const avatar =
+          images.find(function (img) {
+            return img.alt && img.alt.trim().toLowerCase() === username.trim().toLowerCase();
+          }) ||
+          images.find(function (img) {
+            return /zupimages|servimg|imgfast|illiweb|2img/i.test(img.src) && !/icon_|logo/i.test(img.src);
+          });
+
+        if (avatar && avatar.src) {
           LOGBOOK.state.data.passport.avatar = avatar.src;
           saveData();
 
-          avatarBox.innerHTML = `<img src="${escapeHTML(avatar.src)}" alt="${escapeHTML(username)}">`;
+          avatarBox.innerHTML = '<img src="' + escapeHTML(avatar.src) + '" alt="' + escapeHTML(username) + '">';
         }
       })
       .catch(function () {
@@ -690,8 +887,58 @@
       });
   }
 
+  /* =========================
+     HELPERS
+     ========================= */
+
+  function getPriorityLabel(priority) {
+    if (priority === "low") return "Basse";
+    if (priority === "urgent") return "Urgente";
+    return "Normale";
+  }
+
+  function getSparkTypeLabel(type) {
+    if (type === "lien") return "Lien";
+    if (type === "rp") return "RP";
+    if (type === "drama") return "Drama";
+    if (type === "evolution") return "Évolution";
+    return "Idée vague";
+  }
+
+  function getSparkStatusLabel(status) {
+    if (status === "propose") return "Proposé";
+    if (status === "valide") return "Validé";
+    if (status === "abandonne") return "Abandonné";
+    return "À proposer";
+  }
+
+  function getSparkStatusOptions(currentStatus) {
+    const statuses = [
+      ["a-proposer", "À proposer"],
+      ["propose", "Proposé"],
+      ["valide", "Validé"],
+      ["abandonne", "Abandonné"]
+    ];
+
+    return statuses.map(function (status) {
+      const value = status[0];
+      const label = status[1];
+
+      return '<option value="' + escapeHTML(value) + '" ' + (currentStatus === value ? "selected" : "") + '>' + escapeHTML(label) + '</option>';
+    }).join("");
+  }
+
+  function normalizeUrl(url) {
+    const clean = String(url || "").trim();
+
+    if (!clean) return "";
+    if (/^(https?:|\/|#)/i.test(clean)) return clean;
+
+    return "https://" + clean;
+  }
+
   function createId() {
-    return `logbook-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    return "logbook-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
   }
 
   function getInitials(name) {
@@ -722,6 +969,7 @@
     detectUser();
     loadData();
     createInterface();
+    updateLogbookCount();
   }
 
   if (document.readyState === "loading") {
