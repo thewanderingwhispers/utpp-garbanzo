@@ -965,16 +965,12 @@
     });
   }
 
-  function init() {
-      if (!document.documentElement.classList.contains("fa-member")) {
-    return;
-  }
-    
-    detectUser();
-    loadData();
-    createInterface();
-    updateLogbookCount();
-  }
+function init() {
+  detectUser();
+  loadData();
+  createInterface();
+  updateLogbookCount();
+}
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init, { once: true });
