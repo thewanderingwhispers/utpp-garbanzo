@@ -1,7 +1,3 @@
-html:not(.fa-member) .member-only-logbook {
-  display: none !important;
-}
-
 #logbook-root,
 #logbook-toggle {
   --logbook-font: var(--th-font-main, Arial, sans-serif);
