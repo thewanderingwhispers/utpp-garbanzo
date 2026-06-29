@@ -3,4 +3,4 @@
 // POLAROID ; mp express
 // PULSE ;
 // SCRAPBOOK ; gestion des favoris
-// TICKER
+// TICKER ; 10 dernières réponses
