@@ -1,5 +1,7 @@
 (function () {
   const STORAGE_KEY = "rpg-player-panel-state";
+  const PANEL_SELECTOR = "#rpg-player-panel";
+  const TOGGLE_SELECTOR = "[data-rpg-panel-toggle]";
 
   const rpgPanelData = {
     weather: {
@@ -50,14 +52,18 @@
     }
   }
 
+  function getToggleButtons() {
+    return document.querySelectorAll(TOGGLE_SELECTOR);
+  }
+
   function setPanelOpen(panel, isOpen) {
-    const launcher = panel.querySelector(".rpg-panel__launcher");
-
     panel.classList.toggle("rpg-panel--closed", !isOpen);
+    panel.setAttribute("aria-hidden", String(!isOpen));
 
-    if (launcher) {
-      launcher.setAttribute("aria-expanded", String(isOpen));
-    }
+    getToggleButtons().forEach(function (button) {
+      button.setAttribute("aria-expanded", String(isOpen));
+      button.classList.toggle("is-active", isOpen);
+    });
 
     saveState({ isOpen: isOpen });
   }
@@ -145,8 +151,6 @@
     });
 
     const firstDayOfMonth = new Date(year, monthIndex, 1);
-
-    /* JS : dimanche = 0. Ici, on convertit pour avoir lundi = 0. */
     const startingDay = (firstDayOfMonth.getDay() + 6) % 7;
 
     for (let i = 0; i < startingDay; i++) {
@@ -217,66 +221,6 @@
     setInterval(updateCurrentDay, 60000);
   }
 
-  function initDrag(panel) {
-    const handle = panel.querySelector("[data-rpg-drag-handle]");
-    if (!handle) return;
-
-    let isDragging = false;
-    let startX = 0;
-    let startY = 0;
-    let startLeft = 0;
-    let startTop = 0;
-
-    handle.addEventListener("pointerdown", function (event) {
-      if (event.target.closest("button")) return;
-
-      const rect = panel.getBoundingClientRect();
-
-      isDragging = true;
-      startX = event.clientX;
-      startY = event.clientY;
-      startLeft = rect.left;
-      startTop = rect.top;
-
-      panel.style.left = `${rect.left}px`;
-      panel.style.top = `${rect.top}px`;
-      panel.style.right = "auto";
-      panel.style.bottom = "auto";
-
-      handle.setPointerCapture(event.pointerId);
-    });
-
-    handle.addEventListener("pointermove", function (event) {
-      if (!isDragging) return;
-
-      const deltaX = event.clientX - startX;
-      const deltaY = event.clientY - startY;
-
-      const panelRect = panel.getBoundingClientRect();
-      const maxLeft = window.innerWidth - panelRect.width - 8;
-      const maxTop = window.innerHeight - panelRect.height - 8;
-
-      const nextLeft = Math.min(Math.max(8, startLeft + deltaX), maxLeft);
-      const nextTop = Math.min(Math.max(8, startTop + deltaY), maxTop);
-
-      panel.style.left = `${nextLeft}px`;
-      panel.style.top = `${nextTop}px`;
-    });
-
-    handle.addEventListener("pointerup", function () {
-      if (!isDragging) return;
-
-      isDragging = false;
-
-      saveState({
-        left: panel.style.left,
-        top: panel.style.top,
-        right: panel.style.right,
-        bottom: panel.style.bottom
-      });
-    });
-  }
-
   function applySavedState(panel) {
     const state = getSavedState();
 
@@ -288,31 +232,25 @@
 
     if (typeof state.isOpen === "boolean") {
       setPanelOpen(panel, state.isOpen);
-    }
-
-    if (state.left && state.top) {
-      panel.style.left = state.left;
-      panel.style.top = state.top;
-      panel.style.right = state.right || "auto";
-      panel.style.bottom = state.bottom || "auto";
+    } else {
+      setPanelOpen(panel, false);
     }
   }
 
   function initPanel(panel) {
-    const launcher = panel.querySelector(".rpg-panel__launcher");
     const closeButton = panel.querySelector("[data-rpg-close]");
     const themeButton = panel.querySelector("[data-rpg-theme-btn]");
 
     applySavedState(panel);
     fillPanelText(panel);
     initCalendar(panel);
-    initDrag(panel);
 
-    if (launcher) {
-      launcher.addEventListener("click", function () {
-        setPanelOpen(panel, true);
+    getToggleButtons().forEach(function (button) {
+      button.addEventListener("click", function () {
+        const isCurrentlyOpen = !panel.classList.contains("rpg-panel--closed");
+        setPanelOpen(panel, !isCurrentlyOpen);
       });
-    }
+    });
 
     if (closeButton) {
       closeButton.addEventListener("click", function () {
@@ -328,15 +266,29 @@
         setPanelTheme(panel, nextTheme);
       });
     }
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        setPanelOpen(panel, false);
+      }
+    });
   }
 
-  function bootPanels() {
-    document.querySelectorAll(".rpg-panel").forEach(initPanel);
+  function bootPanel() {
+    const panel = document.querySelector(PANEL_SELECTOR) || document.querySelector(".rpg-panel");
+
+    if (!panel) return;
+
+    initPanel(panel);
+
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
+    }
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bootPanels, { once: true });
+    document.addEventListener("DOMContentLoaded", bootPanel, { once: true });
   } else {
-    bootPanels();
+    bootPanel();
   }
 })();
