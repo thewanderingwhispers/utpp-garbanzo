@@ -5,8 +5,8 @@ $(function () {
     $('#FAM-button-open').hide();
     $('#logbook-toggle').hide();
     $('#frqcy-toggle').hide();
-    $('##rpg-panel-button').hide();
-    $('##KRSN-button').hide();
+    $('#rpg-panel-button').hide();
+    $('#KRSN-button').hide();
   }
 
 });
