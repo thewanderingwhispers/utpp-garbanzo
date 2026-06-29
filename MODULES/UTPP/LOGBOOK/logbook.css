@@ -336,6 +336,230 @@
   min-height: 260px;
 }
 
+.logbook-form {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-top: 1px solid var(--logbook-border);
+}
+
+.logbook-grid {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 10px;
+}
+
+.logbook-form input[type="text"],
+.logbook-form input[type="url"],
+.logbook-form textarea,
+.logbook-form select {
+  width: 100%;
+  border: 1px solid var(--logbook-border);
+  border-radius: var(--logbook-radius-sm);
+  background: var(--logbook-card-alt);
+  color: var(--logbook-title);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.logbook-form input[type="text"],
+.logbook-form input[type="url"],
+.logbook-form select {
+  padding: 9px 10px;
+}
+
+.logbook-form textarea {
+  min-height: 70px;
+  resize: vertical;
+  padding: 10px 11px;
+  line-height: 1.5;
+}
+
+.logbook-form input:focus,
+.logbook-form textarea:focus,
+.logbook-form select:focus {
+  border-color: var(--logbook-accent);
+  box-shadow: 0 0 0 3px var(--logbook-accent-soft);
+}
+
+.logbook-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--logbook-sub);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.logbook-check input {
+  accent-color: var(--logbook-accent);
+}
+
+.logbook-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.logbook-submit {
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 13px;
+  background: var(--logbook-chip);
+  color: #111;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.logbook-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px var(--logbook-shadow);
+}
+
+.logbook-list {
+  display: grid;
+  gap: 10px;
+}
+
+.logbook-entry {
+  display: grid;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid var(--logbook-border);
+  border-radius: var(--logbook-radius-md);
+  background: var(--logbook-card);
+}
+
+.logbook-entry.is-turn {
+  border-color: var(--logbook-desc);
+  background:
+    linear-gradient(135deg, var(--logbook-desc-soft), transparent),
+    var(--logbook-card);
+}
+
+.logbook-entry-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.logbook-entry-title {
+  color: var(--logbook-title);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.logbook-entry-title:hover {
+  color: var(--logbook-accent-light);
+}
+
+.logbook-entry-note {
+  color: var(--logbook-text);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.logbook-entry-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.logbook-priority,
+.logbook-turn-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.logbook-priority {
+  background: var(--logbook-accent-soft);
+  color: var(--logbook-accent-light);
+}
+
+.logbook-priority[data-priority="low"] {
+  opacity: .75;
+}
+
+.logbook-priority[data-priority="normal"] {
+  background: var(--logbook-accent-soft);
+  color: var(--logbook-accent-light);
+}
+
+.logbook-priority[data-priority="urgent"] {
+  background: var(--logbook-desc-soft);
+  color: var(--logbook-desc);
+}
+
+.logbook-turn-chip {
+  background: var(--logbook-desc);
+  color: #111;
+}
+
+.logbook-entry-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.logbook-entry-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--logbook-sub);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.logbook-entry-check input {
+  accent-color: var(--logbook-desc);
+}
+
+.logbook-delete {
+  border: 0;
+  background: transparent;
+  color: var(--logbook-sub);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  opacity: .65;
+}
+
+.logbook-delete:hover {
+  color: var(--logbook-desc);
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .logbook-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .logbook-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 640px) {
   #logbook-root {
     top: auto;
