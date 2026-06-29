@@ -137,13 +137,13 @@ function createInterface() {
   if (document.querySelector("#frqcy-root")) return;
 
   document.body.insertAdjacentHTML("beforeend", `
-  <section id="frqcy-root" class="frqcy-closed" aria-hidden="true">
+    <section id="frqcy-root" class="frqcy-closed" aria-hidden="true">
       <header id="frqcy-header">
         <div>
           <strong>HOLD MY FREQUENCY</strong>
           <span id="frqcy-status">ON AIR — 0 tuned in</span>
         </div>
-        <button id="frqcy-close" type="button">×</button>
+        <button id="frqcy-close" type="button" aria-label="Fermer Hold My Frequency">×</button>
       </header>
 
       <nav id="frqcy-channels"></nav>
@@ -174,6 +174,8 @@ function createInterface() {
 
   if (toggleButton) {
     toggleButton.addEventListener("click", toggleFrequency);
+    toggleButton.classList.remove("is-active");
+    toggleButton.setAttribute("aria-expanded", "false");
   }
 
   if (closeButton) {
@@ -226,22 +228,14 @@ function createInterface() {
     }
   });
 
-renderChannels();
-
-if (toggleButton) {
-  toggleButton.classList.remove("is-active");
-  toggleButton.setAttribute("aria-expanded", "false");
-}
-
-if (window.lucide && typeof window.lucide.createIcons === "function") {
-  window.lucide.createIcons();
-}
+  renderChannels();
 
   if (window.lucide && typeof window.lucide.createIcons === "function") {
     window.lucide.createIcons();
   }
 }
-	function toggleFrequency() {
+
+function toggleFrequency() {
   if (isFrequencyOpen()) {
     closeFrequency();
   } else {
