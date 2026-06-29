@@ -1,0 +1,349 @@
+#logbook-root,
+#logbook-toggle {
+  --logbook-font: var(--th-font-main, Arial, sans-serif);
+
+  --logbook-bg: var(--th-cl-panel, #151a1a);
+  --logbook-bg-alt: var(--th-cl-panelAlt, #1d2928);
+  --logbook-card: var(--th-cl-card, #181f1f);
+  --logbook-card-alt: var(--th-cl-cardAlt, #111717);
+
+  --logbook-text: var(--th-cl-txt, #e5ded4);
+  --logbook-title: var(--th-cl-tle, #f6f1e9);
+  --logbook-sub: var(--th-cl-sub, #aeb8b6);
+  --logbook-font-light: var(--th-cl-font, #f1f1f1);
+
+  --logbook-border: var(--th-cl-bord, rgba(188, 227, 225, 0.13));
+  --logbook-accent-light: var(--th-cl-acc1, #bce3e1);
+  --logbook-accent: var(--th-cl-acc2, #52a8a5);
+  --logbook-desc: var(--th-cl-desc2, #d69b45);
+
+  --logbook-accent-soft: var(--th-cl-accFade, rgba(82, 168, 165, 0.18));
+  --logbook-desc-soft: var(--th-cl-descFade, rgba(214, 155, 69, 0.17));
+
+  --logbook-head: var(
+    --th-grad-head,
+    linear-gradient(135deg, #102423, #183836 55%, #4d2f11)
+  );
+
+  --logbook-chip: var(
+    --th-grad-chip,
+    linear-gradient(135deg, #52a8a5, #d69b45)
+  );
+
+  --logbook-shadow: var(--th-cl-shadow, rgba(0, 0, 0, 0.42));
+  --logbook-shadow-strong: var(--th-cl-shadowStrong, rgba(0, 0, 0, 0.62));
+
+  --logbook-radius-sm: var(--th-radius-sm, 8px);
+  --logbook-radius-md: var(--th-radius-md, 14px);
+  --logbook-radius-lg: var(--th-radius-lg, 24px);
+
+  --logbook-transition: var(--th-trans-fast, 0.18s ease);
+}
+
+/* Bouton sidebar */
+#logbook-toggle {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+#logbook-toggle.is-active {
+  transform: translateY(-1px);
+  filter: brightness(1.12);
+}
+
+#logbook-toggle svg,
+#logbook-toggle i {
+  pointer-events: none;
+}
+
+#logbook-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Fenêtre */
+#logbook-root {
+  position: fixed;
+  top: 120px;
+  right: 78px;
+  z-index: 9999;
+  width: min(430px, calc(100vw - 32px));
+  max-height: calc(100vh - 150px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--logbook-border);
+  border-radius: var(--logbook-radius-lg);
+  background:
+    linear-gradient(135deg, var(--logbook-accent-soft), var(--logbook-desc-soft)),
+    var(--logbook-bg);
+  color: var(--logbook-text);
+  box-shadow: 0 24px 90px var(--logbook-shadow-strong);
+  font-family: var(--logbook-font);
+  transform-origin: top right;
+  transition:
+    opacity .22s ease,
+    transform .22s ease,
+    visibility .22s ease;
+}
+
+#logbook-root.logbook-closed {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(10px) scale(.97);
+}
+
+#logbook-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 20px;
+  background: var(--logbook-head);
+  color: var(--logbook-font-light);
+  border-bottom: 1px solid var(--logbook-border);
+}
+
+#logbook-header strong {
+  display: block;
+  color: var(--logbook-font-light);
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+}
+
+#logbook-header span {
+  display: block;
+  margin-top: 7px;
+  color: var(--logbook-accent-light);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  opacity: .82;
+}
+
+#logbook-close {
+  border: 0;
+  background: transparent;
+  color: var(--logbook-font-light);
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: .75;
+  transition:
+    opacity var(--logbook-transition),
+    transform var(--logbook-transition);
+}
+
+#logbook-close:hover {
+  opacity: 1;
+  transform: rotate(6deg);
+}
+
+#logbook-tabs {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 7px;
+  padding: 11px 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--logbook-border);
+  background: var(--logbook-bg-alt);
+}
+
+#logbook-tabs::-webkit-scrollbar {
+  height: 0;
+}
+
+.logbook-tab {
+  border: 1px solid var(--logbook-border);
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: var(--logbook-card-alt);
+  color: var(--logbook-sub);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition:
+    background var(--logbook-transition),
+    color var(--logbook-transition),
+    border-color var(--logbook-transition),
+    transform var(--logbook-transition);
+}
+
+.logbook-tab:hover {
+  transform: translateY(-1px);
+  border-color: var(--logbook-accent);
+  background: var(--logbook-accent-soft);
+  color: var(--logbook-title);
+}
+
+.logbook-tab.is-active {
+  border-color: transparent;
+  background: var(--logbook-chip);
+  color: #111;
+}
+
+#logbook-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px;
+}
+
+.logbook-panel {
+  display: none;
+}
+
+.logbook-panel.is-active {
+  display: grid;
+  gap: 12px;
+}
+
+.logbook-card {
+  border: 1px solid var(--logbook-border);
+  border-radius: var(--logbook-radius-md);
+  background: var(--logbook-card);
+  overflow: hidden;
+}
+
+.logbook-card-head {
+  padding: 12px 13px 8px;
+}
+
+.logbook-label {
+  margin-bottom: 4px;
+  color: var(--logbook-sub);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+
+.logbook-title {
+  color: var(--logbook-title);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.logbook-text {
+  padding: 0 13px 13px;
+  color: var(--logbook-text);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.logbook-passport {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px;
+  align-items: center;
+}
+
+.logbook-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(135deg, var(--logbook-accent-soft), var(--logbook-desc-soft)),
+    var(--logbook-card-alt);
+  color: var(--logbook-title);
+  font-size: 20px;
+  font-weight: 900;
+  outline: 1px solid var(--logbook-border);
+  outline-offset: 4px;
+}
+
+.logbook-avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.logbook-username {
+  color: var(--logbook-title);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.logbook-userid {
+  margin-top: 4px;
+  color: var(--logbook-sub);
+  font-size: 11px;
+}
+
+.logbook-field {
+  display: grid;
+  gap: 6px;
+  padding: 0 14px 14px;
+}
+
+.logbook-field label {
+  color: var(--logbook-sub);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .11em;
+}
+
+.logbook-field textarea,
+.logbook-field select {
+  width: 100%;
+  border: 1px solid var(--logbook-border);
+  border-radius: var(--logbook-radius-sm);
+  background: var(--logbook-card-alt);
+  color: var(--logbook-title);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+}
+
+.logbook-field textarea {
+  min-height: 84px;
+  resize: vertical;
+  padding: 10px 11px;
+  line-height: 1.5;
+}
+
+.logbook-field select {
+  padding: 9px 10px;
+}
+
+.logbook-field textarea:focus,
+.logbook-field select:focus {
+  border-color: var(--logbook-accent);
+  box-shadow: 0 0 0 3px var(--logbook-accent-soft);
+}
+
+.logbook-placeholder {
+  padding: 14px;
+  border: 1px dashed var(--logbook-border);
+  border-radius: var(--logbook-radius-md);
+  color: var(--logbook-sub);
+  font-size: 12px;
+  line-height: 1.55;
+  background: rgba(255, 255, 255, .03);
+}
+
+#logbook-notepad {
+  min-height: 260px;
+}
+
+@media (max-width: 640px) {
+  #logbook-root {
+    top: auto;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    width: auto;
+    max-height: 78vh;
+    transform-origin: bottom right;
+  }
+}
