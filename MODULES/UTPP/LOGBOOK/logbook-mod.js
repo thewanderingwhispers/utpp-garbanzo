@@ -966,6 +966,10 @@
   }
 
   function init() {
+      if (!document.documentElement.classList.contains("fa-member")) {
+    return;
+  }
+    
     detectUser();
     loadData();
     createInterface();
