@@ -376,7 +376,7 @@
   font-size: 12px;
   line-height: 1.45;
 }
-#rpg-panel-button
+#rpg-panel-button {
   position: relative;
   width: 45px;
   height: 45px;
@@ -389,6 +389,10 @@
   place-items: center;
   cursor: pointer;
   transition: .25s;
+}
+#rpg-panel-button svg {
+  width: 21px;
+  height: 21px;
 }
 #rpg-panel-button.is-active,
 [data-rpg-panel-toggle].is-active {
