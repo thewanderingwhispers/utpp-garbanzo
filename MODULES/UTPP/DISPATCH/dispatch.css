@@ -6,48 +6,17 @@
 .rpg-panel {
   position: fixed;
   top: 120px;
-  right: 24px;
+  right: 78px;
   z-index: 9999;
   width: min(var(--th-panel-width), calc(100vw - 32px));
   color: var(--th-cl-txt);
   font-family: var(--th-font-main);
+  pointer-events: none;
 }
 
 .rpg-panel button,
 .rpg-panel a {
   font-family: inherit;
-}
-
-.rpg-panel__launcher {
-  display: none;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 13px;
-  border: 1px solid var(--th-cl-bord);
-  border-radius: 999px;
-  background: var(--th-grad-head);
-  color: var(--th-cl-font);
-  box-shadow: 0 10px 28px var(--th-cl-shadow);
-  cursor: pointer;
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-}
-
-.rpg-panel--closed {
-  width: auto;
-}
-
-.rpg-panel--closed .rpg-panel__launcher {
-  display: inline-flex;
-}
-
-.rpg-panel--closed .rpg-panel__box {
-  display: none;
-}
-
-.rpg-panel__launcher-icon {
-  color: var(--th-cl-desc1);
 }
 
 .rpg-panel__box {
@@ -59,6 +28,27 @@
     var(--th-cl-panel);
   box-shadow: 0 18px 45px var(--th-cl-shadowStrong);
   backdrop-filter: blur(8px);
+
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transform-origin: top right;
+  pointer-events: auto;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    visibility 0s linear 0s;
+}
+
+.rpg-panel--closed .rpg-panel__box {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px) scale(0.985);
+  pointer-events: none;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    visibility 0s linear 0.22s;
 }
 
 .rpg-panel__topbar {
@@ -69,7 +59,7 @@
   padding: 13px 14px;
   background: var(--th-grad-head);
   color: var(--th-cl-font);
-  cursor: move;
+  cursor: default;
   user-select: none;
 }
 
@@ -388,6 +378,23 @@
   line-height: 1.45;
 }
 
+#rpg-panel-button.is-active,
+[data-rpg-panel-toggle].is-active {
+  transform: translateY(-1px);
+  filter: brightness(1.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rpg-panel__box,
+  .rpg-panel--closed .rpg-panel__box,
+  .rpg-panel__icon-btn,
+  .rpg-calendar__day,
+  .rpg-calendar__event,
+  .rpg-links a {
+    transition: none;
+  }
+}
+
 @media (max-width: 640px) {
   .rpg-panel {
     top: auto;
@@ -397,16 +404,15 @@
     width: auto;
   }
 
+  .rpg-panel__box {
+    transform-origin: bottom right;
+  }
+
+  .rpg-panel--closed .rpg-panel__box {
+    transform: translateY(8px) scale(0.985);
+  }
+
   .rpg-panel__content {
     max-height: 70vh;
-  }
-
-  .rpg-panel--closed {
-    left: auto;
-    width: auto;
-  }
-
-  .rpg-panel__launcher {
-    margin-left: auto;
   }
 }
