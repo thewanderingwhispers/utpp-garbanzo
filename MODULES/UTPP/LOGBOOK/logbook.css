@@ -40,12 +40,25 @@
   --logbook-transition: var(--th-trans-fast, 0.18s ease);
 }
 
-/* Bouton sidebar */
 #logbook-toggle {
   position: relative;
-  display: inline-grid;
+  width: 45px;
+  height: 45px;
+  margin: 0 auto;
+  border: 1px solid var(--th-cl-bord);
+  border-radius: var(--th-radius-md);
+  background: var(--th-cl-panelAlt);
+  color: var(--th-cl-font);
+  display: grid;
   place-items: center;
   cursor: pointer;
+  transition: .25s;
+}
+
+#logbook-toggle:hover {
+  transform: scale(1.08) rotate(-6deg);
+  background: var(--th-grad-chip);
+  color: var(--th-cl-font);
 }
 
 #logbook-toggle.is-active {
