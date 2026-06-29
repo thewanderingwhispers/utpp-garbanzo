@@ -376,7 +376,20 @@
   font-size: 12px;
   line-height: 1.45;
 }
-
+#rpg-panel-button
+  position: relative;
+  width: 45px;
+  height: 45px;
+  margin: 0 auto;
+  border: 1px solid var(--th-cl-bord);
+  border-radius: var(--th-radius-md);
+  background: var(--th-cl-panelAlt);
+  color: var(--th-cl-font);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: .25s;
+}
 #rpg-panel-button.is-active,
 [data-rpg-panel-toggle].is-active {
   transform: translateY(-1px);
