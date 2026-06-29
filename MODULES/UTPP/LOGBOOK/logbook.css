@@ -571,3 +571,73 @@
     transform-origin: bottom right;
   }
 }
+
+.logbook-spark-target {
+  color: var(--logbook-title);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.logbook-spark-target span {
+  color: var(--logbook-sub);
+  font-weight: 700;
+}
+
+.logbook-spark-type,
+.logbook-spark-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.logbook-spark-type {
+  background: var(--logbook-accent-soft);
+  color: var(--logbook-accent-light);
+}
+
+.logbook-spark-status {
+  background: var(--logbook-desc-soft);
+  color: var(--logbook-desc);
+}
+
+.logbook-spark-status[data-status="a-proposer"] {
+  background: var(--logbook-accent-soft);
+  color: var(--logbook-accent-light);
+}
+
+.logbook-spark-status[data-status="propose"] {
+  background: var(--logbook-desc-soft);
+  color: var(--logbook-desc);
+}
+
+.logbook-spark-status[data-status="valide"] {
+  background: var(--logbook-chip);
+  color: #111;
+}
+
+.logbook-spark-status[data-status="abandonne"] {
+  opacity: .55;
+}
+
+.logbook-mini-select {
+  border: 1px solid var(--logbook-border);
+  border-radius: 999px;
+  padding: 6px 9px;
+  background: var(--logbook-card-alt);
+  color: var(--logbook-title);
+  font-family: inherit;
+  font-size: 11px;
+  outline: none;
+}
+
+.logbook-mini-select:focus {
+  border-color: var(--logbook-accent);
+  box-shadow: 0 0 0 3px var(--logbook-accent-soft);
+}
