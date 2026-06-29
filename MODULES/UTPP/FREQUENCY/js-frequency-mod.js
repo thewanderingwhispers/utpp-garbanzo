@@ -1363,17 +1363,60 @@ const finalMessage = isCommand
     return String(value).replace(/["\\]/g, "\\$&");
   }
 
-  function init() {
-    loadReplyCache();
-    detectCurrentUser();
-    createInterface();
-    ensureChatboxFrame();
-    syncFrequency(true);
+	function frqcyIsMember() {
+  const data = window._userdata || {};
+  const session = data.session_logged_in;
+  const userId = data.user_id;
 
-    FRQCY.state.syncTimer = setInterval(syncFrequency, FRQCY.refreshRate);
-
-    installDevTools();
+  if (session === 1 || session === true || session === "1") {
+    return true;
   }
+
+  if (
+    userId !== undefined &&
+    userId !== null &&
+    String(userId).trim() !== "" &&
+    String(userId).trim() !== "-1" &&
+    String(userId).trim() !== "0"
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function stopFrqcyForGuests() {
+  if (frqcyIsMember()) {
+    document.documentElement.classList.add("fa-member");
+    document.documentElement.classList.remove("fa-guest");
+    return false;
+  }
+
+  document.documentElement.classList.add("fa-guest");
+  document.documentElement.classList.remove("fa-member");
+
+  document.querySelectorAll("#frqcy-toggle, #frqcy-root").forEach(function (element) {
+    element.remove();
+  });
+
+  return true;
+}
+
+function init() {
+  if (stopFrqcyForGuests()) {
+    return;
+  }
+
+  loadReplyCache();
+  detectCurrentUser();
+  createInterface();
+  ensureChatboxFrame();
+  syncFrequency(true);
+
+  FRQCY.state.syncTimer = setInterval(syncFrequency, FRQCY.refreshRate);
+
+  installDevTools();
+}
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
