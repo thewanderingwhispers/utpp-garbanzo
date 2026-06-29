@@ -133,105 +133,171 @@
     return frame?.contentDocument || null;
   }
 
-  function createInterface() {
-    if (document.querySelector("#frqcy-root")) return;
+function createInterface() {
+  if (document.querySelector("#frqcy-root")) return;
 
-    document.body.insertAdjacentHTML("beforeend", `
-      <button id="frqcy-toggle" type="button">
-        <span class="frqcy-dot"></span>
-        <span>FRQCY</span>
-        <span id="frqcy-badge"></span>
-      </button>
-
-      <section id="frqcy-root" class="frqcy-closed">
-        <header id="frqcy-header">
-          <div>
-            <strong>HOLD MY FREQUENCY</strong>
-            <span id="frqcy-status">ON AIR — 0 tuned in</span>
-          </div>
-          <button id="frqcy-close" type="button">×</button>
-        </header>
-
-        <nav id="frqcy-channels"></nav>
-
-        <div id="frqcy-body">
-          <aside id="frqcy-members">
-            <div class="frqcy-panel-title">ON AIR</div>
-            <ul id="frqcy-member-list"></ul>
-            <div id="frqcy-typing"></div>
-          </aside>
-
-          <main id="frqcy-messages"></main>
+  document.body.insertAdjacentHTML("beforeend", `
+  <section id="frqcy-root" class="frqcy-closed" aria-hidden="true">
+      <header id="frqcy-header">
+        <div>
+          <strong>HOLD MY FREQUENCY</strong>
+          <span id="frqcy-status">ON AIR — 0 tuned in</span>
         </div>
+        <button id="frqcy-close" type="button">×</button>
+      </header>
 
-        <div id="frqcy-reply-preview" hidden></div>
+      <nav id="frqcy-channels"></nav>
 
-        <form id="frqcy-form">
-          <input id="frqcy-input" type="text" placeholder="Écrire sur la fréquence..." autocomplete="off">
-          <button type="submit">➤</button>
-        </form>
-      </section>
-    `);
+      <div id="frqcy-body">
+        <aside id="frqcy-members">
+          <div class="frqcy-panel-title">ON AIR</div>
+          <ul id="frqcy-member-list"></ul>
+          <div id="frqcy-typing"></div>
+        </aside>
 
-    document.querySelector("#frqcy-toggle").addEventListener("click", openFrequency);
-    document.querySelector("#frqcy-close").addEventListener("click", closeFrequency);
-    document.querySelector("#frqcy-form").addEventListener("submit", sendMessage);
+        <main id="frqcy-messages"></main>
+      </div>
 
-    document.querySelector("#frqcy-input").addEventListener("input", handleTypingInput);
-    document.querySelector("#frqcy-input").addEventListener("keydown", handleTypingKeydown);
+      <div id="frqcy-reply-preview" hidden></div>
 
-    document.addEventListener("click", event => {
-      const channelButton = event.target.closest("[data-frqcy-channel]");
-      if (channelButton) {
-        switchChannel(channelButton.dataset.frqcyChannel);
-        return;
-      }
+      <form id="frqcy-form">
+        <input id="frqcy-input" type="text" placeholder="Écrire sur la fréquence..." autocomplete="off">
+        <button type="submit">➤</button>
+      </form>
+    </section>
+  `);
 
-      const mentionButton = event.target.closest("[data-mention]");
-      if (mentionButton) {
-        mentionUser(mentionButton.dataset.mention);
-        return;
-      }
+  const toggleButton = document.querySelector("#frqcy-toggle");
+  const closeButton = document.querySelector("#frqcy-close");
+  const form = document.querySelector("#frqcy-form");
+  const input = document.querySelector("#frqcy-input");
 
-      const replyButton = event.target.closest("[data-reply-mid]");
-      if (replyButton) {
-        selectReply(replyButton.dataset.replyMid);
-        return;
-      }
-
-      const cancelReply = event.target.closest("[data-frqcy-cancel-reply]");
-      if (cancelReply) {
-        clearReply();
-        return;
-      }
-
-      const replyJump = event.target.closest("[data-reply-jump]");
-      if (replyJump) {
-        jumpToMessage(replyJump.dataset.replyJump);
-      }
-    });
-
-    renderChannels();
+  if (toggleButton) {
+    toggleButton.addEventListener("click", toggleFrequency);
   }
 
-  function openFrequency() {
-    document.querySelector("#frqcy-root").classList.remove("frqcy-closed");
-
-    FRQCY.state.unreadCount = 0;
-    FRQCY.state.hasUnreadMention = false;
-
-    updateBadge();
-    syncFrequency(true);
-    refocusInput(50);
+  if (closeButton) {
+    closeButton.addEventListener("click", closeFrequency);
   }
 
-  function closeFrequency() {
-    document.querySelector("#frqcy-root").classList.add("frqcy-closed");
+  if (form) {
+    form.addEventListener("submit", sendMessage);
   }
 
-  function isFrequencyOpen() {
-    return !document.querySelector("#frqcy-root")?.classList.contains("frqcy-closed");
+  if (input) {
+    input.addEventListener("input", handleTypingInput);
+    input.addEventListener("keydown", handleTypingKeydown);
   }
+
+  document.addEventListener("click", event => {
+    const channelButton = event.target.closest("[data-frqcy-channel]");
+    if (channelButton) {
+      switchChannel(channelButton.dataset.frqcyChannel);
+      return;
+    }
+
+    const mentionButton = event.target.closest("[data-mention]");
+    if (mentionButton) {
+      mentionUser(mentionButton.dataset.mention);
+      return;
+    }
+
+    const replyButton = event.target.closest("[data-reply-mid]");
+    if (replyButton) {
+      selectReply(replyButton.dataset.replyMid);
+      return;
+    }
+
+    const cancelReply = event.target.closest("[data-frqcy-cancel-reply]");
+    if (cancelReply) {
+      clearReply();
+      return;
+    }
+
+    const replyJump = event.target.closest("[data-reply-jump]");
+    if (replyJump) {
+      jumpToMessage(replyJump.dataset.replyJump);
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      closeFrequency();
+    }
+  });
+
+renderChannels();
+
+if (toggleButton) {
+  toggleButton.classList.remove("is-active");
+  toggleButton.setAttribute("aria-expanded", "false");
+}
+
+if (window.lucide && typeof window.lucide.createIcons === "function") {
+  window.lucide.createIcons();
+}
+
+  if (window.lucide && typeof window.lucide.createIcons === "function") {
+    window.lucide.createIcons();
+  }
+}
+	function toggleFrequency() {
+  if (isFrequencyOpen()) {
+    closeFrequency();
+  } else {
+    openFrequency();
+  }
+}
+
+function openFrequency() {
+  const root = document.querySelector("#frqcy-root");
+  const toggle = document.querySelector("#frqcy-toggle");
+
+  if (!root) return;
+
+  root.classList.remove("frqcy-closed");
+  root.setAttribute("aria-hidden", "false");
+
+  if (toggle) {
+    toggle.classList.add("is-active");
+    toggle.setAttribute("aria-expanded", "true");
+  }
+
+  const channel = FRQCY.state.currentChannel;
+
+  FRQCY.state.channelUnread[channel] = 0;
+  FRQCY.state.channelMentions[channel] = false;
+
+  FRQCY.state.unreadCount = Object.values(FRQCY.state.channelUnread)
+    .reduce((sum, count) => sum + Number(count || 0), 0);
+
+  FRQCY.state.hasUnreadMention = Object.values(FRQCY.state.channelMentions)
+    .some(Boolean);
+
+  updateBadge();
+  syncFrequency(true);
+  refocusInput(50);
+}
+
+function closeFrequency() {
+  const root = document.querySelector("#frqcy-root");
+  const toggle = document.querySelector("#frqcy-toggle");
+
+  if (!root) return;
+
+  root.classList.add("frqcy-closed");
+  root.setAttribute("aria-hidden", "true");
+
+  if (toggle) {
+    toggle.classList.remove("is-active");
+    toggle.setAttribute("aria-expanded", "false");
+  }
+}
+
+function isFrequencyOpen() {
+  const root = document.querySelector("#frqcy-root");
+  return !!root && !root.classList.contains("frqcy-closed");
+}
 
   function switchChannel(channelId) {
     if (!canAccessChannel(channelId)) return;
