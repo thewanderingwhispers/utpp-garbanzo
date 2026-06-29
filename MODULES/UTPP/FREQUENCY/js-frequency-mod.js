@@ -15,9 +15,9 @@
     },
 
     staff: {
-  		admins: ["bad omen", "Morgan Quill"],
-  		moderators: []
-	},
+      admins: ["bad omen", "Morgan Quill"],
+      moderators: []
+    },
 
     selectors: {
       frame: "#frame_chatbox",
@@ -60,17 +60,29 @@
   function detectCurrentUser() {
     const data = window._userdata || {};
 
-    if (data.username) FRQCY.state.currentUser = String(data.username).trim();
-    if (data.user_id) FRQCY.state.currentUserId = String(data.user_id).trim();
+    if (data.username) {
+      FRQCY.state.currentUser = String(data.username).trim();
+    }
 
-    if (FRQCY.state.currentUser) registerMentionName(FRQCY.state.currentUser);
+    if (data.user_id) {
+      FRQCY.state.currentUserId = String(data.user_id).trim();
+    }
+
+    if (FRQCY.state.currentUser) {
+      registerMentionName(FRQCY.state.currentUser);
+    }
   }
 
   function getRole(name) {
     const clean = normalizeName(name);
 
-    if (FRQCY.staff.admins.map(normalizeName).includes(clean)) return "admin";
-    if (FRQCY.staff.moderators.map(normalizeName).includes(clean)) return "moderator";
+    if (FRQCY.staff.admins.map(normalizeName).includes(clean)) {
+      return "admin";
+    }
+
+    if (FRQCY.staff.moderators.map(normalizeName).includes(clean)) {
+      return "moderator";
+    }
 
     return "";
   }
@@ -82,24 +94,30 @@
 
   function canAccessChannel(channelId) {
     const channel = FRQCY.channels[channelId];
-    if (!channel) return false;
 
+    if (!channel) return false;
     if (channel.access === "staff") return isStaff();
+
     return true;
   }
 
   function canWriteChannel(channelId) {
     const channel = FRQCY.channels[channelId];
-    if (!channel) return false;
 
+    if (!channel) return false;
     if (channel.write === "staff") return isStaff();
+
     return canAccessChannel(channelId);
   }
 
   function getAccessibleChannels() {
     return Object.entries(FRQCY.channels)
-      .filter(([id]) => canAccessChannel(id))
-      .map(([id, channel]) => ({ id, ...channel }));
+      .filter(function ([id]) {
+        return canAccessChannel(id);
+      })
+      .map(function ([id, channel]) {
+        return { id: id, ...channel };
+      });
   }
 
   function getRoleIcon(role) {
@@ -130,168 +148,176 @@
 
   function getChatboxDoc() {
     const frame = ensureChatboxFrame();
-    return frame?.contentDocument || null;
+    return frame && frame.contentDocument ? frame.contentDocument : null;
   }
 
-function createInterface() {
-  if (document.querySelector("#frqcy-root")) return;
+  function createInterface() {
+    if (document.querySelector("#frqcy-root")) return;
 
-  document.body.insertAdjacentHTML("beforeend", `
-    <section id="frqcy-root" class="frqcy-closed" aria-hidden="true">
-      <header id="frqcy-header">
-        <div>
-          <strong>HOLD MY FREQUENCY</strong>
-          <span id="frqcy-status">ON AIR — 0 tuned in</span>
+    document.body.insertAdjacentHTML("beforeend", `
+      <section id="frqcy-root" class="frqcy-closed" aria-hidden="true">
+        <header id="frqcy-header">
+          <div>
+            <strong>HOLD MY FREQUENCY</strong>
+            <span id="frqcy-status">ON AIR — 0 tuned in</span>
+          </div>
+
+          <button id="frqcy-close" type="button" aria-label="Fermer Hold My Frequency">×</button>
+        </header>
+
+        <nav id="frqcy-channels"></nav>
+
+        <div id="frqcy-body">
+          <aside id="frqcy-members">
+            <div class="frqcy-panel-title">ON AIR</div>
+            <ul id="frqcy-member-list"></ul>
+            <div id="frqcy-typing"></div>
+          </aside>
+
+          <main id="frqcy-messages"></main>
         </div>
-        <button id="frqcy-close" type="button" aria-label="Fermer Hold My Frequency">×</button>
-      </header>
 
-      <nav id="frqcy-channels"></nav>
+        <div id="frqcy-reply-preview" hidden></div>
 
-      <div id="frqcy-body">
-        <aside id="frqcy-members">
-          <div class="frqcy-panel-title">ON AIR</div>
-          <ul id="frqcy-member-list"></ul>
-          <div id="frqcy-typing"></div>
-        </aside>
+        <form id="frqcy-form">
+          <input id="frqcy-input" type="text" placeholder="Écrire sur la fréquence..." autocomplete="off">
+          <button type="submit">➤</button>
+        </form>
+      </section>
+    `);
 
-        <main id="frqcy-messages"></main>
-      </div>
+    const toggleButton = document.querySelector("#frqcy-toggle");
+    const closeButton = document.querySelector("#frqcy-close");
+    const form = document.querySelector("#frqcy-form");
+    const input = document.querySelector("#frqcy-input");
 
-      <div id="frqcy-reply-preview" hidden></div>
+    if (toggleButton) {
+      toggleButton.addEventListener("click", toggleFrequency);
+      toggleButton.classList.remove("is-active");
+      toggleButton.setAttribute("aria-expanded", "false");
+    }
 
-      <form id="frqcy-form">
-        <input id="frqcy-input" type="text" placeholder="Écrire sur la fréquence..." autocomplete="off">
-        <button type="submit">➤</button>
-      </form>
-    </section>
-  `);
+    if (closeButton) {
+      closeButton.addEventListener("click", closeFrequency);
+    }
 
-  const toggleButton = document.querySelector("#frqcy-toggle");
-  const closeButton = document.querySelector("#frqcy-close");
-  const form = document.querySelector("#frqcy-form");
-  const input = document.querySelector("#frqcy-input");
+    if (form) {
+      form.addEventListener("submit", sendMessage);
+    }
 
-  if (toggleButton) {
-    toggleButton.addEventListener("click", toggleFrequency);
-    toggleButton.classList.remove("is-active");
-    toggleButton.setAttribute("aria-expanded", "false");
+    if (input) {
+      input.addEventListener("input", handleTypingInput);
+      input.addEventListener("keydown", handleTypingKeydown);
+    }
+
+    document.addEventListener("click", function (event) {
+      const channelButton = event.target.closest("[data-frqcy-channel]");
+
+      if (channelButton) {
+        switchChannel(channelButton.dataset.frqcyChannel);
+        return;
+      }
+
+      const mentionButton = event.target.closest("[data-mention]");
+
+      if (mentionButton) {
+        mentionUser(mentionButton.dataset.mention);
+        return;
+      }
+
+      const replyButton = event.target.closest("[data-reply-mid]");
+
+      if (replyButton) {
+        selectReply(replyButton.dataset.replyMid);
+        return;
+      }
+
+      const cancelReply = event.target.closest("[data-frqcy-cancel-reply]");
+
+      if (cancelReply) {
+        clearReply();
+        return;
+      }
+
+      const replyJump = event.target.closest("[data-reply-jump]");
+
+      if (replyJump) {
+        jumpToMessage(replyJump.dataset.replyJump);
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        closeFrequency();
+      }
+    });
+
+    renderChannels();
+
+    if (window.lucide && typeof window.lucide.createIcons === "function") {
+      window.lucide.createIcons();
+    }
   }
 
-  if (closeButton) {
-    closeButton.addEventListener("click", closeFrequency);
-  }
-
-  if (form) {
-    form.addEventListener("submit", sendMessage);
-  }
-
-  if (input) {
-    input.addEventListener("input", handleTypingInput);
-    input.addEventListener("keydown", handleTypingKeydown);
-  }
-
-  document.addEventListener("click", event => {
-    const channelButton = event.target.closest("[data-frqcy-channel]");
-    if (channelButton) {
-      switchChannel(channelButton.dataset.frqcyChannel);
-      return;
-    }
-
-    const mentionButton = event.target.closest("[data-mention]");
-    if (mentionButton) {
-      mentionUser(mentionButton.dataset.mention);
-      return;
-    }
-
-    const replyButton = event.target.closest("[data-reply-mid]");
-    if (replyButton) {
-      selectReply(replyButton.dataset.replyMid);
-      return;
-    }
-
-    const cancelReply = event.target.closest("[data-frqcy-cancel-reply]");
-    if (cancelReply) {
-      clearReply();
-      return;
-    }
-
-    const replyJump = event.target.closest("[data-reply-jump]");
-    if (replyJump) {
-      jumpToMessage(replyJump.dataset.replyJump);
-    }
-  });
-
-  document.addEventListener("keydown", event => {
-    if (event.key === "Escape") {
+  function toggleFrequency() {
+    if (isFrequencyOpen()) {
       closeFrequency();
+    } else {
+      openFrequency();
     }
-  });
-
-  renderChannels();
-
-  if (window.lucide && typeof window.lucide.createIcons === "function") {
-    window.lucide.createIcons();
-  }
-}
-
-function toggleFrequency() {
-  if (isFrequencyOpen()) {
-    closeFrequency();
-  } else {
-    openFrequency();
-  }
-}
-
-function openFrequency() {
-  const root = document.querySelector("#frqcy-root");
-  const toggle = document.querySelector("#frqcy-toggle");
-
-  if (!root) return;
-
-  root.classList.remove("frqcy-closed");
-  root.setAttribute("aria-hidden", "false");
-
-  if (toggle) {
-    toggle.classList.add("is-active");
-    toggle.setAttribute("aria-expanded", "true");
   }
 
-  const channel = FRQCY.state.currentChannel;
+  function openFrequency() {
+    const root = document.querySelector("#frqcy-root");
+    const toggle = document.querySelector("#frqcy-toggle");
 
-  FRQCY.state.channelUnread[channel] = 0;
-  FRQCY.state.channelMentions[channel] = false;
+    if (!root) return;
 
-  FRQCY.state.unreadCount = Object.values(FRQCY.state.channelUnread)
-    .reduce((sum, count) => sum + Number(count || 0), 0);
+    root.classList.remove("frqcy-closed");
+    root.setAttribute("aria-hidden", "false");
 
-  FRQCY.state.hasUnreadMention = Object.values(FRQCY.state.channelMentions)
-    .some(Boolean);
+    if (toggle) {
+      toggle.classList.add("is-active");
+      toggle.setAttribute("aria-expanded", "true");
+    }
 
-  updateBadge();
-  syncFrequency(true);
-  refocusInput(50);
-}
+    const channel = FRQCY.state.currentChannel;
 
-function closeFrequency() {
-  const root = document.querySelector("#frqcy-root");
-  const toggle = document.querySelector("#frqcy-toggle");
+    FRQCY.state.channelUnread[channel] = 0;
+    FRQCY.state.channelMentions[channel] = false;
 
-  if (!root) return;
+    FRQCY.state.unreadCount = Object.values(FRQCY.state.channelUnread)
+      .reduce(function (sum, count) {
+        return sum + Number(count || 0);
+      }, 0);
 
-  root.classList.add("frqcy-closed");
-  root.setAttribute("aria-hidden", "true");
+    FRQCY.state.hasUnreadMention = Object.values(FRQCY.state.channelMentions)
+      .some(Boolean);
 
-  if (toggle) {
-    toggle.classList.remove("is-active");
-    toggle.setAttribute("aria-expanded", "false");
+    updateBadge();
+    syncFrequency(true);
+    refocusInput(50);
   }
-}
 
-function isFrequencyOpen() {
-  const root = document.querySelector("#frqcy-root");
-  return !!root && !root.classList.contains("frqcy-closed");
-}
+  function closeFrequency() {
+    const root = document.querySelector("#frqcy-root");
+    const toggle = document.querySelector("#frqcy-toggle");
+
+    if (!root) return;
+
+    root.classList.add("frqcy-closed");
+    root.setAttribute("aria-hidden", "true");
+
+    if (toggle) {
+      toggle.classList.remove("is-active");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+  }
+
+  function isFrequencyOpen() {
+    const root = document.querySelector("#frqcy-root");
+    return !!root && !root.classList.contains("frqcy-closed");
+  }
 
   function switchChannel(channelId) {
     if (!canAccessChannel(channelId)) return;
@@ -310,11 +336,12 @@ function isFrequencyOpen() {
 
   function renderChannels() {
     const target = document.querySelector("#frqcy-channels");
+
     if (!target) return;
 
     const channels = getAccessibleChannels();
 
-    target.innerHTML = channels.map(channel => {
+    target.innerHTML = channels.map(function (channel) {
       const unread = FRQCY.state.channelUnread[channel.id] || 0;
       const hasMention = !!FRQCY.state.channelMentions[channel.id];
       const active = channel.id === FRQCY.state.currentChannel;
@@ -333,7 +360,7 @@ function isFrequencyOpen() {
   }
 
   function syncFrequency(forceScroll = false) {
-    const inputWasFocused = document.activeElement?.id === "frqcy-input";
+    const inputWasFocused = document.activeElement && document.activeElement.id === "frqcy-input";
 
     detectCurrentUser();
 
@@ -400,7 +427,11 @@ function isFrequencyOpen() {
           </div>
         `);
 
-        document.querySelector("#frqcy-connect button").addEventListener("click", joinChatbox);
+        const button = document.querySelector("#frqcy-connect button");
+
+        if (button) {
+          button.addEventListener("click", joinChatbox);
+        }
       }
     } else if (notice) {
       notice.remove();
@@ -412,10 +443,13 @@ function isFrequencyOpen() {
 
   function joinChatbox() {
     const cb = getChatboxDoc();
+
     if (!cb) return;
 
     const possibleLinks = Array.from(cb.querySelectorAll("a, button, span"))
-      .filter(el => /Connexion|Rejoindre le Chat|Rejoindre/i.test(el.textContent || ""));
+      .filter(function (element) {
+        return /Connexion|Rejoindre le Chat|Rejoindre/i.test(element.textContent || "");
+      });
 
     const loginTarget =
       cb.querySelector("#chatbox_option_co a") ||
@@ -424,13 +458,14 @@ function isFrequencyOpen() {
 
     if (loginTarget) {
       loginTarget.click();
-      setTimeout(() => syncFrequency(true), 800);
-      setTimeout(() => syncFrequency(true), 1600);
+      setTimeout(function () { syncFrequency(true); }, 800);
+      setTimeout(function () { syncFrequency(true); }, 1600);
     }
   }
 
   function readMembers() {
     const cb = getChatboxDoc();
+
     if (!cb) return;
 
     const nativeMembers = cb.querySelector(FRQCY.selectors.members);
@@ -440,24 +475,34 @@ function isFrequencyOpen() {
     if (!nativeMembers || !list || !status) return;
 
     const members = Array.from(nativeMembers.querySelectorAll(".chatbox-user-username"))
-      .map(el => ({
-        name: el.textContent.trim(),
-        userId: el.dataset.user || "",
-        color: getNativeColor(el)
-      }))
-      .filter(member => member.name);
+      .map(function (element) {
+        return {
+          name: element.textContent.trim(),
+          userId: element.dataset.user || "",
+          color: getNativeColor(element)
+        };
+      })
+      .filter(function (member) {
+        return member.name;
+      });
 
-    members.forEach(member => {
+    members.forEach(function (member) {
       registerMentionName(member.name);
       FRQCY.state.membersByName[normalizeName(member.name)] = member;
 
-      if (member.color) FRQCY.state.colorByName[normalizeName(member.name)] = member.color;
+      if (member.color) {
+        FRQCY.state.colorByName[normalizeName(member.name)] = member.color;
+      }
+
       if (member.userId && !FRQCY.state.avatarCache[member.userId]) {
         loadAvatar(member.userId, member.name);
       }
     });
 
-    list.innerHTML = members.map(member => renderMember(member)).join("");
+    list.innerHTML = members.map(function (member) {
+      return renderMember(member);
+    }).join("");
+
     status.textContent = `ON AIR — ${members.length} tuned in`;
   }
 
@@ -469,6 +514,7 @@ function isFrequencyOpen() {
     return `
       <li class="frqcy-member frqcy-role-${role || "member"}" data-user="${escapeHTML(member.userId)}">
         ${renderAvatar(member.name, avatar, "frqcy-member-avatar")}
+
         <button type="button" class="frqcy-member-name" data-mention="${escapeHTML(member.name)}">
           <span class="frqcy-name" ${color ? `style="color:${escapeHTML(color)}"` : ""}>
             ${getRoleIcon(role)}
@@ -481,6 +527,7 @@ function isFrequencyOpen() {
 
   function readMessages(forceScroll = false) {
     const cb = getChatboxDoc();
+
     if (!cb) return;
 
     const nativeChatbox = cb.querySelector(FRQCY.selectors.chatbox);
@@ -491,34 +538,41 @@ function isFrequencyOpen() {
     const wasNearBottom = isNearBottom(target);
     const rows = Array.from(nativeChatbox.querySelectorAll("p[class*='chatbox_row']"));
 
-    const parsedRows = rows.map(row => {
+    const parsedRows = rows.map(function (row) {
       const parsed = parseMessageRow(row);
       const mid = getMessageId(row, parsed);
       const control = parseControlPayload(parsed.message);
       const channelPayload = parseChannelPayload(parsed.message);
 
       return {
-        row,
-        parsed,
-        mid,
-        control,
+        row: row,
+        parsed: parsed,
+        mid: mid,
+        control: control,
         channel: channelPayload.channel,
         channelBody: channelPayload.body
       };
     });
 
-    parsedRows.forEach(item => {
-      if (item.control?.type === "typing") rememberTyping(item.control);
+    parsedRows.forEach(function (item) {
+      if (item.control && item.control.type === "typing") {
+        rememberTyping(item.control);
+      }
     });
 
     const visibleRows = parsedRows
-      .filter(item => !item.control)
-      .filter(item => canAccessChannel(item.channel));
+      .filter(function (item) {
+        return !item.control;
+      })
+      .filter(function (item) {
+        return canAccessChannel(item.channel);
+      });
 
-    const currentRows = visibleRows
-      .filter(item => item.channel === FRQCY.state.currentChannel);
+    const currentRows = visibleRows.filter(function (item) {
+      return item.channel === FRQCY.state.currentChannel;
+    });
 
-    const newRows = visibleRows.filter(item => {
+    const newRows = visibleRows.filter(function (item) {
       return item.mid && !FRQCY.state.knownMessageIds.has(item.mid);
     });
 
@@ -526,7 +580,7 @@ function isFrequencyOpen() {
 
     FRQCY.state.messageMap = {};
 
-    visibleRows.forEach(item => {
+    visibleRows.forEach(function (item) {
       if (!item.mid) return;
 
       const cleanPayload = parseReplyPayload(item.channelBody);
@@ -540,7 +594,7 @@ function isFrequencyOpen() {
         message: cleanPayload.body,
         rawMessage: item.parsed.message,
         channel: item.channel,
-        time,
+        time: time,
         system: item.parsed.system
       };
 
@@ -548,7 +602,9 @@ function isFrequencyOpen() {
     });
 
     target.innerHTML = currentRows
-      .map(item => renderMessage(item.row, item.parsed, item.mid, item.channelBody))
+      .map(function (item) {
+        return renderMessage(item.row, item.parsed, item.mid, item.channelBody);
+      })
       .join("");
 
     if (!target.innerHTML.trim()) {
@@ -570,7 +626,7 @@ function isFrequencyOpen() {
   function handleUnreadRows(newRows) {
     if (!FRQCY.state.initialized || !newRows.length) return;
 
-    newRows.forEach(item => {
+    newRows.forEach(function (item) {
       const reply = parseReplyPayload(item.channelBody);
       const mentioned = mentionsCurrentUser(reply.body);
 
@@ -589,7 +645,9 @@ function isFrequencyOpen() {
     });
 
     FRQCY.state.unreadCount = Object.values(FRQCY.state.channelUnread)
-      .reduce((sum, count) => sum + Number(count || 0), 0);
+      .reduce(function (sum, count) {
+        return sum + Number(count || 0);
+      }, 0);
 
     FRQCY.state.hasUnreadMention = Object.values(FRQCY.state.channelMentions)
       .some(Boolean);
@@ -605,7 +663,9 @@ function isFrequencyOpen() {
 
     registerMentionName(parsed.author);
 
-    if (!body || isControlMessage(parsed.message) || /Vous êtes déconnecté|Rejoindre le Chat/i.test(body)) return "";
+    if (!body || isControlMessage(parsed.message) || /Vous êtes déconnecté|Rejoindre le Chat/i.test(body)) {
+      return "";
+    }
 
     if (parsed.system) {
       return `
@@ -618,10 +678,10 @@ function isFrequencyOpen() {
     const reply = parseReplyPayload(body);
     const nativeAvatar = row.querySelector(".cb-avatar img")?.src || "";
     const member = FRQCY.state.membersByName[normalizeName(parsed.author)];
-    const userId = parsed.userId || member?.userId || "";
+    const userId = parsed.userId || (member && member.userId) || "";
     const cachedAvatar = userId ? FRQCY.state.avatarCache[userId] : "";
     const avatar = nativeAvatar || cachedAvatar;
-    const color = parsed.color || member?.color || FRQCY.state.colorByName[normalizeName(parsed.author)] || "";
+    const color = parsed.color || (member && member.color) || FRQCY.state.colorByName[normalizeName(parsed.author)] || "";
     const role = getRole(parsed.author);
     const mentioned = mentionsCurrentUser(reply.body);
 
@@ -659,10 +719,13 @@ function isFrequencyOpen() {
 
     const username =
       row.querySelector(".chatbox-message-username, .chatbox-user-username, .chatbox-username") ||
-      msg?.querySelector("strong");
+      (msg ? msg.querySelector("strong") : null);
 
-    let author = username ? username.textContent.trim().replace(/^@\s*/, "").replace(/\s*:$/, "") : "";
-    let userId = username?.dataset?.user || "";
+    let author = username
+      ? username.textContent.trim().replace(/^@\s*/, "").replace(/\s*:$/, "")
+      : "";
+
+    let userId = username && username.dataset ? username.dataset.user || "" : "";
     let color = getNativeColor(username);
 
     let message = msg ? msg.innerText.trim() : row.innerText.trim();
@@ -672,13 +735,24 @@ function isFrequencyOpen() {
       /a rejoint le chat|a été déconnecté|s'est déconnecté|est déconnecté|a quitté le chat|session timeout/i.test(message);
 
     if (isSystem) {
-      return { author: "FREQUENCY", userId: "", color: "", message, system: true };
+      return {
+        author: "FREQUENCY",
+        userId: "",
+        color: "",
+        message: message,
+        system: true
+      };
     }
 
     const knownMember = FRQCY.state.membersByName[normalizeName(author)];
 
-    if (!userId && knownMember?.userId) userId = knownMember.userId;
-    if (!color && knownMember?.color) color = knownMember.color;
+    if (!userId && knownMember && knownMember.userId) {
+      userId = knownMember.userId;
+    }
+
+    if (!color && knownMember && knownMember.color) {
+      color = knownMember.color;
+    }
 
     if (author) {
       const authorPattern = new RegExp("^@?\\s*" + escapeRegExp(author) + "\\s*:?\\s*", "i");
@@ -687,9 +761,9 @@ function isFrequencyOpen() {
 
     return {
       author: author || "FREQUENCY",
-      userId,
-      color,
-      message,
+      userId: userId,
+      color: color,
+      message: message,
       system: false
     };
   }
@@ -730,13 +804,15 @@ function isFrequencyOpen() {
     if (row.dataset.frqcyMid) return row.dataset.frqcyMid;
 
     const time = cleanTime(row.querySelector(".date-and-time")?.textContent || "");
+
     const base = [
-      parsed?.author || "",
+      parsed && parsed.author ? parsed.author : "",
       time,
-      parsed?.message || row.innerText || ""
+      parsed && parsed.message ? parsed.message : row.innerText || ""
     ].join("|");
 
     const id = "frqcy-" + simpleHash(base);
+
     row.dataset.frqcyMid = id;
 
     return id;
@@ -758,7 +834,12 @@ function isFrequencyOpen() {
     const raw = String(message || "");
     const match = raw.match(/^\[reply=([^\]]+)\]\n?/i);
 
-    if (!match) return { replyId: "", body: raw };
+    if (!match) {
+      return {
+        replyId: "",
+        body: raw
+      };
+    }
 
     return {
       replyId: match[1],
@@ -814,12 +895,14 @@ function isFrequencyOpen() {
     }
 
     preview.hidden = false;
+
     preview.innerHTML = `
       <div class="frqcy-reply-preview-inner">
         <div>
           <strong>Réponse à ${escapeHTML(target.author)}</strong>
           <span>${escapeHTML(truncate(target.message, 120))}</span>
         </div>
+
         <button type="button" data-frqcy-cancel-reply aria-label="Annuler la réponse">×</button>
       </div>
     `;
@@ -832,6 +915,7 @@ function isFrequencyOpen() {
 
   function jumpToMessage(mid) {
     const target = document.querySelector(`.frqcy-message[data-mid="${cssEscape(mid)}"]`);
+
     if (!target) return;
 
     target.scrollIntoView({
@@ -849,7 +933,7 @@ function isFrequencyOpen() {
       FRQCY.state.replyCache = JSON.parse(
         localStorage.getItem(FRQCY.state.replyCacheKey) || "{}"
       );
-    } catch {
+    } catch (error) {
       FRQCY.state.replyCache = {};
     }
   }
@@ -860,7 +944,9 @@ function isFrequencyOpen() {
         FRQCY.state.replyCacheKey,
         JSON.stringify(FRQCY.state.replyCache)
       );
-    } catch {}
+    } catch (error) {
+      /* localStorage indisponible */
+    }
   }
 
   function rememberMessage(message) {
@@ -885,6 +971,7 @@ function isFrequencyOpen() {
 
   function handleTypingInput() {
     const input = document.querySelector("#frqcy-input");
+
     if (!input || !input.value.trim()) return;
 
     sendTypingSignal();
@@ -912,6 +999,7 @@ function isFrequencyOpen() {
 
   function sendNativeControlMessage(message) {
     const cb = getChatboxDoc();
+
     if (!cb) return;
 
     const nativeInput = cb.querySelector(FRQCY.selectors.input);
@@ -921,8 +1009,8 @@ function isFrequencyOpen() {
     if (!nativeInput || !nativeSubmit) return;
 
     const wasWriting = document.activeElement === frqcyInput;
-    const selectionStart = frqcyInput?.selectionStart || 0;
-    const selectionEnd = frqcyInput?.selectionEnd || 0;
+    const selectionStart = frqcyInput ? frqcyInput.selectionStart || 0 : 0;
+    const selectionEnd = frqcyInput ? frqcyInput.selectionEnd || 0 : 0;
 
     nativeInput.value = message;
     nativeSubmit.click();
@@ -934,30 +1022,32 @@ function isFrequencyOpen() {
 
   function restoreInputFocus(selectionStart = null, selectionEnd = null) {
     const input = document.querySelector("#frqcy-input");
+
     if (!input || input.readOnly) return;
 
-    const start = selectionStart ?? input.value.length;
-    const end = selectionEnd ?? input.value.length;
+    const start = selectionStart === null ? input.value.length : selectionStart;
+    const end = selectionEnd === null ? input.value.length : selectionEnd;
 
-    requestAnimationFrame(() => {
+    requestAnimationFrame(function () {
       input.focus();
       input.setSelectionRange(start, end);
     });
 
-    setTimeout(() => {
+    setTimeout(function () {
       input.focus();
       input.setSelectionRange(start, end);
     }, 50);
 
-    setTimeout(() => {
+    setTimeout(function () {
       input.focus();
       input.setSelectionRange(start, end);
     }, 150);
   }
 
   function refocusInput(delay = 0) {
-    setTimeout(() => {
+    setTimeout(function () {
       const input = document.querySelector("#frqcy-input");
+
       if (!input || input.readOnly) return;
 
       input.focus();
@@ -969,6 +1059,7 @@ function isFrequencyOpen() {
     const raw = String(message || "").trim();
 
     let typing = raw.match(/^\[frqcy:typing\|([a-z0-9_-]+)\|(.+?)\|(\d+)\]$/i);
+
     if (typing) {
       return {
         type: "typing",
@@ -979,6 +1070,7 @@ function isFrequencyOpen() {
     }
 
     typing = raw.match(/^\[frqcy:typing\|(.+?)\|(\d+)\]$/i);
+
     if (typing) {
       return {
         type: "typing",
@@ -1017,19 +1109,24 @@ function isFrequencyOpen() {
 
   function updateTypingIndicator() {
     const target = document.querySelector("#frqcy-typing");
+
     if (!target) return;
 
     const now = Date.now();
 
-    Object.keys(FRQCY.state.typingUsers).forEach(key => {
+    Object.keys(FRQCY.state.typingUsers).forEach(function (key) {
       if (now - FRQCY.state.typingUsers[key].time > FRQCY.typingTTL) {
         delete FRQCY.state.typingUsers[key];
       }
     });
 
     const users = Object.values(FRQCY.state.typingUsers)
-      .filter(item => item.channel === FRQCY.state.currentChannel)
-      .map(item => item.name)
+      .filter(function (item) {
+        return item.channel === FRQCY.state.currentChannel;
+      })
+      .map(function (item) {
+        return item.name;
+      })
       .filter(Boolean);
 
     if (!users.length) {
@@ -1055,31 +1152,42 @@ function isFrequencyOpen() {
 
   function mentionUser(name) {
     const input = document.querySelector("#frqcy-input");
+
     if (!input) return;
 
     const mention = `@${name} `;
     input.value = input.value.trim() ? `${input.value.trim()} ${mention}` : mention;
-    refocusInput(0);
 
+    refocusInput(0);
     sendTypingSignal();
   }
 
   function registerMentionName(name) {
     const clean = String(name || "").trim();
-    if (clean && clean !== "FREQUENCY") FRQCY.state.mentionNames.add(clean);
+
+    if (clean && clean !== "FREQUENCY") {
+      FRQCY.state.mentionNames.add(clean);
+    }
   }
 
   function getMentionNames() {
     const names = [
       ...FRQCY.state.mentionNames,
-      ...Object.values(FRQCY.state.membersByName).map(member => member.name),
+      ...Object.values(FRQCY.state.membersByName).map(function (member) {
+        return member.name;
+      }),
       ...FRQCY.staff.admins,
       ...FRQCY.staff.moderators,
       FRQCY.state.currentUser
     ].filter(Boolean);
 
-    return Array.from(new Map(names.map(name => [normalizeName(name), name])).values())
-      .sort((a, b) => b.length - a.length);
+    return Array.from(
+      new Map(names.map(function (name) {
+        return [normalizeName(name), name];
+      })).values()
+    ).sort(function (a, b) {
+      return b.length - a.length;
+    });
   }
 
   function renderMentions(text) {
@@ -1093,7 +1201,7 @@ function isFrequencyOpen() {
     let html = "";
     let lastIndex = 0;
 
-    raw.replace(pattern, (match, _name, index) => {
+    raw.replace(pattern, function (match, _name, index) {
       html += escapeHTML(raw.slice(lastIndex, index));
       html += `<span class="frqcy-mention">${escapeHTML(match)}</span>`;
       lastIndex = index + match.length;
@@ -1101,6 +1209,7 @@ function isFrequencyOpen() {
     });
 
     html += escapeHTML(raw.slice(lastIndex));
+
     return html;
   }
 
@@ -1110,6 +1219,7 @@ function isFrequencyOpen() {
     if (!current) return false;
 
     const pattern = new RegExp(`@${escapeRegExp(current)}(?=$|\\s|[.,!?;:])`, "i");
+
     return pattern.test(String(text || ""));
   }
 
@@ -1129,80 +1239,91 @@ function isFrequencyOpen() {
     FRQCY.state.avatarCache[userId] = "";
 
     fetch(`/u${encodeURIComponent(userId)}`)
-      .then(response => response.text())
-      .then(html => {
+      .then(function (response) {
+        return response.text();
+      })
+      .then(function (html) {
         const doc = new DOMParser().parseFromString(html, "text/html");
 
         const avatar =
           Array.from(doc.querySelectorAll("img"))
-            .find(img => img.alt?.trim().toLowerCase() === username.trim().toLowerCase()) ||
+            .find(function (img) {
+              return img.alt && img.alt.trim().toLowerCase() === username.trim().toLowerCase();
+            }) ||
           Array.from(doc.querySelectorAll("img"))
-            .find(img => /zupimages|servimg|imgfast|illiweb|2img/i.test(img.src) && !/icon_|logo/i.test(img.src));
+            .find(function (img) {
+              return /zupimages|servimg|imgfast|illiweb|2img/i.test(img.src) && !/icon_|logo/i.test(img.src);
+            });
 
-        if (avatar?.src) {
+        if (avatar && avatar.src) {
           FRQCY.state.avatarCache[userId] = avatar.src;
           syncFrequency(false);
         }
       })
-      .catch(() => {
+      .catch(function () {
         FRQCY.state.avatarCache[userId] = "";
       });
   }
 
-  function getNativeColor(el) {
-    if (!el) return "";
-    return el.style?.color || el.closest("[style*='color']")?.style?.color || "";
+  function getNativeColor(element) {
+    if (!element) return "";
+
+    return element.style && element.style.color
+      ? element.style.color
+      : element.closest("[style*='color']")
+        ? element.closest("[style*='color']").style.color
+        : "";
   }
-	
-	function getSlashCommand(message) {
-  const match = String(message || "").trim().match(/^\/([a-z]+)(?:\s|$)/i);
-  return match ? match[1].toLowerCase() : "";
-}
 
-function isNativeChatboxCommand(message) {
-  const command = getSlashCommand(message);
+  function getSlashCommand(message) {
+    const match = String(message || "").trim().match(/^\/([a-z]+)(?:\s|$)/i);
+    return match ? match[1].toLowerCase() : "";
+  }
 
-  return [
-    "clear",
-    "cls",
-    "ban",
-    "unban",
-    "mod",
-    "unmod",
-    "banlist",
-    "help",
-    "roll",
-    "me",
-    "kick",
-    "exit",
-    "abs",
-    "away"
-  ].includes(command);
-}
+  function isNativeChatboxCommand(message) {
+    const command = getSlashCommand(message);
 
-function isClearCommand(message) {
-  const command = getSlashCommand(message);
-  return command === "clear" || command === "cls";
-}
+    return [
+      "clear",
+      "cls",
+      "ban",
+      "unban",
+      "mod",
+      "unmod",
+      "banlist",
+      "help",
+      "roll",
+      "me",
+      "kick",
+      "exit",
+      "abs",
+      "away"
+    ].includes(command);
+  }
 
-function resetLocalChatStateAfterClear() {
-  FRQCY.state.knownMessageIds = new Set();
-  FRQCY.state.messageMap = {};
-  FRQCY.state.replyCache = {};
-  FRQCY.state.channelUnread = {};
-  FRQCY.state.channelMentions = {};
-  FRQCY.state.unreadCount = 0;
-  FRQCY.state.hasUnreadMention = false;
+  function isClearCommand(message) {
+    const command = getSlashCommand(message);
+    return command === "clear" || command === "cls";
+  }
 
-  saveReplyCache();
-  updateBadge();
-}
+  function resetLocalChatStateAfterClear() {
+    FRQCY.state.knownMessageIds = new Set();
+    FRQCY.state.messageMap = {};
+    FRQCY.state.replyCache = {};
+    FRQCY.state.channelUnread = {};
+    FRQCY.state.channelMentions = {};
+    FRQCY.state.unreadCount = 0;
+    FRQCY.state.hasUnreadMention = false;
+
+    saveReplyCache();
+    updateBadge();
+  }
 
   function sendMessage(event) {
     event.preventDefault();
 
     const input = document.querySelector("#frqcy-input");
-    const message = input.value.trim();
+    const message = input ? input.value.trim() : "";
     const channel = FRQCY.state.currentChannel;
 
     if (!message || !canWriteChannel(channel)) {
@@ -1211,6 +1332,7 @@ function resetLocalChatStateAfterClear() {
     }
 
     const cb = getChatboxDoc();
+
     if (!cb) {
       refocusInput(0);
       return;
@@ -1226,20 +1348,20 @@ function resetLocalChatStateAfterClear() {
 
     const isCommand = isNativeChatboxCommand(message);
 
-const body = FRQCY.state.replyTarget && !isCommand
-  ? `[reply=${FRQCY.state.replyTarget.id}]\n${message}`
-  : message;
+    const body = FRQCY.state.replyTarget && !isCommand
+      ? `[reply=${FRQCY.state.replyTarget.id}]\n${message}`
+      : message;
 
-const finalMessage = isCommand
-  ? message
-  : encodeChannelPayload(channel, body);
+    const finalMessage = isCommand
+      ? message
+      : encodeChannelPayload(channel, body);
 
     nativeInput.value = finalMessage;
     nativeSubmit.click();
-	  
-	  if (isClearCommand(message)) {
-  resetLocalChatStateAfterClear();
-}
+
+    if (isClearCommand(message)) {
+      resetLocalChatStateAfterClear();
+    }
 
     input.value = "";
     clearReply();
@@ -1251,7 +1373,7 @@ const finalMessage = isCommand
     refocusInput(50);
     refocusInput(150);
 
-    setTimeout(() => {
+    setTimeout(function () {
       syncFrequency(true);
       refocusInput(0);
       refocusInput(80);
@@ -1265,7 +1387,9 @@ const finalMessage = isCommand
     if (!badge || !toggle) return;
 
     FRQCY.state.unreadCount = Object.values(FRQCY.state.channelUnread)
-      .reduce((sum, count) => sum + Number(count || 0), 0);
+      .reduce(function (sum, count) {
+        return sum + Number(count || 0);
+      }, 0);
 
     FRQCY.state.hasUnreadMention = Object.values(FRQCY.state.channelMentions)
       .some(Boolean);
@@ -1284,7 +1408,7 @@ const finalMessage = isCommand
 
   function installDevTools() {
     window.FRQCY_DEV = {
-      pause() {
+      pause: function () {
         if (!FRQCY.state.syncTimer) {
           console.log("FRQCY is already paused");
           return;
@@ -1292,25 +1416,27 @@ const finalMessage = isCommand
 
         clearInterval(FRQCY.state.syncTimer);
         FRQCY.state.syncTimer = null;
+
         console.log("FRQCY paused");
       },
 
-      resume() {
+      resume: function () {
         if (FRQCY.state.syncTimer) {
           console.log("FRQCY is already running");
           return;
         }
 
         FRQCY.state.syncTimer = setInterval(syncFrequency, FRQCY.refreshRate);
+
         console.log("FRQCY resumed");
       },
 
-      sync() {
+      sync: function () {
         syncFrequency(true);
         console.log("FRQCY synced");
       },
 
-      state() {
+      state: function () {
         console.log(FRQCY.state);
         return FRQCY.state;
       }
@@ -1318,29 +1444,31 @@ const finalMessage = isCommand
   }
 
   function normalizeName(name) {
-    return String(name).trim().toLowerCase();
+    return String(name || "").trim().toLowerCase();
   }
 
   function escapeRegExp(str) {
-    return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return String(str || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
   function getInitials(name) {
-    return String(name)
+    return String(name || "")
       .trim()
       .split(/\s+/)
       .slice(0, 2)
-      .map(part => part[0])
+      .map(function (part) {
+        return part[0] || "";
+      })
       .join("")
       .toUpperCase();
   }
 
-  function isNearBottom(el) {
-    return el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+  function isNearBottom(element) {
+    return element.scrollHeight - element.scrollTop - element.clientHeight < 80;
   }
 
   function cleanTime(time) {
-    return String(time).replace("[", "").replace("]", "").trim();
+    return String(time || "").replace("[", "").replace("]", "").trim();
   }
 
   function truncate(text, max = 90) {
@@ -1349,74 +1477,36 @@ const finalMessage = isCommand
   }
 
   function escapeHTML(str) {
-    return String(str).replace(/[&<>"']/g, char => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    }[char]));
+    return String(str || "").replace(/[&<>"']/g, function (char) {
+      return {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char];
+    });
   }
 
   function cssEscape(value) {
-    if (window.CSS && CSS.escape) return CSS.escape(String(value));
+    if (window.CSS && CSS.escape) {
+      return CSS.escape(String(value));
+    }
+
     return String(value).replace(/["\\]/g, "\\$&");
   }
 
-	function frqcyIsMember() {
-  const data = window._userdata || {};
-  const session = data.session_logged_in;
-  const userId = data.user_id;
+  function init() {
+    loadReplyCache();
+    detectCurrentUser();
+    createInterface();
+    ensureChatboxFrame();
+    syncFrequency(true);
 
-  if (session === 1 || session === true || session === "1") {
-    return true;
+    FRQCY.state.syncTimer = setInterval(syncFrequency, FRQCY.refreshRate);
+
+    installDevTools();
   }
-
-  if (
-    userId !== undefined &&
-    userId !== null &&
-    String(userId).trim() !== "" &&
-    String(userId).trim() !== "-1" &&
-    String(userId).trim() !== "0"
-  ) {
-    return true;
-  }
-
-  return false;
-}
-
-function stopFrqcyForGuests() {
-  if (frqcyIsMember()) {
-    document.documentElement.classList.add("fa-member");
-    document.documentElement.classList.remove("fa-guest");
-    return false;
-  }
-
-  document.documentElement.classList.add("fa-guest");
-  document.documentElement.classList.remove("fa-member");
-
-  document.querySelectorAll("#frqcy-toggle, #frqcy-root").forEach(function (element) {
-    element.remove();
-  });
-
-  return true;
-}
-
-function init() {
-  if (stopFrqcyForGuests()) {
-    return;
-  }
-
-  loadReplyCache();
-  detectCurrentUser();
-  createInterface();
-  ensureChatboxFrame();
-  syncFrequency(true);
-
-  FRQCY.state.syncTimer = setInterval(syncFrequency, FRQCY.refreshRate);
-
-  installDevTools();
-}
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
