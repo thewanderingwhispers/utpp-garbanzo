@@ -147,7 +147,7 @@
                   </select>
                 </div>
 
-                <input id="logbook-deck-url" type="url" placeholder="Lien du sujet">
+                <input id="logbook-deck-url" type="text" placeholder="Lien du sujet">
 
                 <textarea id="logbook-deck-note" placeholder="Petite note : contexte, partenaire, détail à ne pas oublier..."></textarea>
 
@@ -172,14 +172,36 @@
                 <div class="logbook-title">Vos envies avant de les proposer</div>
               </div>
 
-              <div class="logbook-text">
-                Ici, on codera les idées de liens, RP, drama, évolutions et envies vagues.
-              </div>
+              <form id="logbook-sparks-form" class="logbook-form">
+                <input id="logbook-sparks-target" type="text" placeholder="Personnage ciblé / pseudo / idée sans cible">
+
+                <div class="logbook-grid">
+                  <select id="logbook-sparks-type">
+                    <option value="lien">Lien</option>
+                    <option value="rp">RP</option>
+                    <option value="drama">Drama</option>
+                    <option value="evolution">Évolution</option>
+                    <option value="vague">Idée vague</option>
+                  </select>
+
+                  <select id="logbook-sparks-status">
+                    <option value="a-proposer">À proposer</option>
+                    <option value="propose">Proposé</option>
+                    <option value="valide">Validé</option>
+                    <option value="abandonne">Abandonné</option>
+                  </select>
+                </div>
+
+                <textarea id="logbook-sparks-note" placeholder="Votre envie, idée, scène, twist, relation, détail à garder sous le coude..."></textarea>
+
+                <div class="logbook-actions">
+                  <span class="logbook-check">Une étincelle à ne pas perdre.</span>
+                  <button class="logbook-submit" type="submit">Ajouter</button>
+                </div>
+              </form>
             </div>
 
-            <div class="logbook-placeholder">
-              Prochaine étape : fiches d’envies avec cible, type, statut et champ libre.
-            </div>
+            <div id="logbook-sparks-list" class="logbook-list"></div>
           </section>
 
           <section class="logbook-panel" data-logbook-panel="notepad">
@@ -202,6 +224,7 @@
     bindEvents();
     fillFields();
     renderDeck();
+    renderSparks();
     loadAvatar();
 
     if (window.lucide && typeof window.lucide.createIcons === "function") {
@@ -215,8 +238,12 @@
     const quote = document.querySelector("#logbook-quote");
     const status = document.querySelector("#logbook-status");
     const notepad = document.querySelector("#logbook-notepad");
+
     const deckForm = document.querySelector("#logbook-deck-form");
     const deckList = document.querySelector("#logbook-deck-list");
+
+    const sparksForm = document.querySelector("#logbook-sparks-form");
+    const sparksList = document.querySelector("#logbook-sparks-list");
 
     if (toggle) {
       toggle.addEventListener("click", toggleLogbook);
@@ -268,6 +295,15 @@
     if (deckList) {
       deckList.addEventListener("click", handleDeckClick);
       deckList.addEventListener("change", handleDeckChange);
+    }
+
+    if (sparksForm) {
+      sparksForm.addEventListener("submit", handleSparksSubmit);
+    }
+
+    if (sparksList) {
+      sparksList.addEventListener("click", handleSparksClick);
+      sparksList.addEventListener("change", handleSparksChange);
     }
   }
 
@@ -403,10 +439,153 @@
     }).join("");
   }
 
+  function handleSparksSubmit(event) {
+    event.preventDefault();
+
+    const target = document.querySelector("#logbook-sparks-target");
+    const type = document.querySelector("#logbook-sparks-type");
+    const status = document.querySelector("#logbook-sparks-status");
+    const note = document.querySelector("#logbook-sparks-note");
+
+    const targetValue = target?.value.trim() || "";
+    const noteValue = note?.value.trim() || "";
+
+    if (!targetValue && !noteValue) return;
+
+    const item = {
+      id: createId(),
+      target: targetValue,
+      type: type?.value || "vague",
+      status: status?.value || "a-proposer",
+      note: noteValue,
+      createdAt: Date.now()
+    };
+
+    LOGBOOK.state.data.sparks.unshift(item);
+    saveData();
+    renderSparks();
+
+    if (target) target.value = "";
+    if (type) type.value = "lien";
+    if (status) status.value = "a-proposer";
+    if (note) note.value = "";
+
+    if (target) target.focus();
+  }
+
+  function handleSparksClick(event) {
+    const deleteButton = event.target.closest("[data-logbook-spark-delete]");
+
+    if (!deleteButton) return;
+
+    const id = deleteButton.dataset.logbookSparkDelete;
+
+    LOGBOOK.state.data.sparks = LOGBOOK.state.data.sparks.filter(function (item) {
+      return item.id !== id;
+    });
+
+    saveData();
+    renderSparks();
+  }
+
+  function handleSparksChange(event) {
+    const statusSelect = event.target.closest("[data-logbook-spark-status]");
+
+    if (!statusSelect) return;
+
+    const id = statusSelect.dataset.logbookSparkStatus;
+    const item = LOGBOOK.state.data.sparks.find(function (entry) {
+      return entry.id === id;
+    });
+
+    if (!item) return;
+
+    item.status = statusSelect.value;
+
+    saveData();
+    renderSparks();
+  }
+
+  function renderSparks() {
+    const list = document.querySelector("#logbook-sparks-list");
+    if (!list) return;
+
+    const items = LOGBOOK.state.data.sparks || [];
+
+    if (!items.length) {
+      list.innerHTML = `
+        <div class="logbook-placeholder">
+          Aucune étincelle pour le moment. Notez une envie de lien, une idée de scène, un drama potentiel ou une évolution à proposer.
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = items.map(function (item) {
+      const target = item.target || "Idée sans cible";
+      const typeLabel = getSparkTypeLabel(item.type);
+      const statusLabel = getSparkStatusLabel(item.status);
+
+      return `
+        <article class="logbook-entry">
+          <div class="logbook-entry-top">
+            <div class="logbook-spark-target">
+              ${escapeHTML(target)}
+              ${!item.target ? `<span> — libre</span>` : ""}
+            </div>
+
+            <button class="logbook-delete" type="button" data-logbook-spark-delete="${escapeHTML(item.id)}" aria-label="Supprimer cette envie">×</button>
+          </div>
+
+          ${item.note ? `<div class="logbook-entry-note">${escapeHTML(item.note)}</div>` : ""}
+
+          <div class="logbook-entry-meta">
+            <span class="logbook-spark-type">${escapeHTML(typeLabel)}</span>
+            <span class="logbook-spark-status" data-status="${escapeHTML(item.status)}">${escapeHTML(statusLabel)}</span>
+          </div>
+
+          <div class="logbook-entry-footer">
+            <select class="logbook-mini-select" data-logbook-spark-status="${escapeHTML(item.id)}" aria-label="Changer le statut">
+              ${getSparkStatusOptions(item.status)}
+            </select>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
   function getPriorityLabel(priority) {
     if (priority === "low") return "Basse";
     if (priority === "urgent") return "Urgente";
     return "Normale";
+  }
+
+  function getSparkTypeLabel(type) {
+    if (type === "lien") return "Lien";
+    if (type === "rp") return "RP";
+    if (type === "drama") return "Drama";
+    if (type === "evolution") return "Évolution";
+    return "Idée vague";
+  }
+
+  function getSparkStatusLabel(status) {
+    if (status === "propose") return "Proposé";
+    if (status === "valide") return "Validé";
+    if (status === "abandonne") return "Abandonné";
+    return "À proposer";
+  }
+
+  function getSparkStatusOptions(currentStatus) {
+    const statuses = [
+      ["a-proposer", "À proposer"],
+      ["propose", "Proposé"],
+      ["valide", "Validé"],
+      ["abandonne", "Abandonné"]
+    ];
+
+    return statuses.map(function ([value, label]) {
+      return `<option value="${escapeHTML(value)}" ${currentStatus === value ? "selected" : ""}>${escapeHTML(label)}</option>`;
+    }).join("");
   }
 
   function normalizeUrl(url) {
