@@ -1,4 +1,4 @@
-$(function () {
+/* $(function () {
 
   const update = () => {
     const notif = $('#notiffi_button').is(':visible');
@@ -17,4 +17,4 @@ $(function () {
     subtree: true
   });
 
-});
+}); */
