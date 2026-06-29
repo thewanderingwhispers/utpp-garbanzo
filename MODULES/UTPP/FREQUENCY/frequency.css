@@ -9,7 +9,7 @@
   pointer-events: none !important;
 }
 
-#frqcy-root,
+/* #frqcy-root,
 #frqcy-toggle {
   --frqcy-font: var(--th-font-main, Arial, sans-serif);
 
@@ -55,7 +55,7 @@
   --frqcy-radius-lg: 28px;
 
   --frqcy-transition: var(--th-trans-fast, 0.18s ease);
-}
+} */
 
 #frqcy-toggle {
   position: relative;
