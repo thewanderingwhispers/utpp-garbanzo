@@ -58,90 +58,53 @@
 }
 
 #frqcy-toggle {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 999;
-  border: 1px solid var(--frqcy-border);
-  border-radius: 999px;
-  padding: 14px 22px;
-  font-family: var(--frqcy-font);
-  font-weight: 900;
-  letter-spacing: .16em;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
   cursor: pointer;
-  background: var(--frqcy-head);
-  color: var(--frqcy-font-light);
-  box-shadow: 0 10px 30px var(--frqcy-shadow);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-transform: uppercase;
 }
 
-#frqcy-toggle:hover {
-  box-shadow: 0 14px 38px var(--frqcy-shadow-strong);
-}
-
-.frqcy-dot,
-.frqcy-member-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--frqcy-accent-light);
-  display: inline-block;
-  box-shadow: 0 0 0 3px var(--frqcy-accent-soft);
+#frqcy-toggle.is-active {
+  transform: translateY(-1px);
+  filter: brightness(1.12);
 }
 
 #frqcy-toggle #frqcy-badge {
-  min-width: 18px;
-  height: 18px;
-  padding: 0 6px;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 5px;
   border-radius: 999px;
   background: var(--frqcy-desc-light);
   color: var(--frqcy-desc-dark);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 900;
   display: none;
   align-items: center;
   justify-content: center;
   letter-spacing: 0;
-  line-height: 18px;
+  line-height: 16px;
+  pointer-events: none;
 }
 
 #frqcy-toggle.frqcy-has-unread #frqcy-badge {
   display: inline-flex !important;
 }
 
-#frqcy-toggle.frqcy-has-unread .frqcy-dot {
+#frqcy-toggle.frqcy-has-unread i,
+#frqcy-toggle.frqcy-has-unread svg {
   animation: frqcyPulse 1s infinite;
 }
 
 #frqcy-toggle.frqcy-has-mention {
-  box-shadow:
-    0 0 0 2px var(--frqcy-desc-soft),
-    0 10px 30px var(--frqcy-shadow);
+  filter: brightness(1.18);
 }
 
 #frqcy-toggle.frqcy-has-mention #frqcy-badge {
   background: var(--frqcy-desc) !important;
   color: #111 !important;
-}
-
-#frqcy-toggle.frqcy-has-mention .frqcy-dot {
-  background: var(--frqcy-desc) !important;
-  box-shadow: 0 0 0 3px var(--frqcy-desc-soft);
-}
-
-@keyframes frqcyPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-
-  50% {
-    transform: scale(1.6);
-    opacity: .45;
-  }
 }
 
 #frqcy-root {
