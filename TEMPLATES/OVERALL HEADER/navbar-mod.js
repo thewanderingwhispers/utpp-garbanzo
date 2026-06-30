@@ -110,7 +110,22 @@
     return profile;
   };
 
-  const setupStickyState = (navbar) => {
+  const getRestGap = (navig) => {
+    const styles = window.getComputedStyle(navig);
+    const cssVar = styles.getPropertyValue("--utpp-nav-rest-gap");
+    const value = parseFloat(cssVar);
+
+    if (!Number.isNaN(value)) return value;
+
+    const marginTop = parseFloat(styles.marginTop);
+    return Number.isNaN(marginTop) ? 0 : marginTop;
+  };
+
+  const setupStickyState = (navbar, navig) => {
+    if (navbar.dataset.utppStickyReady === "1") return;
+
+    navbar.dataset.utppStickyReady = "1";
+
     let sentinel = navbar.previousElementSibling;
 
     if (!sentinel || !sentinel.classList.contains("utpp-navbarSentinel")) {
@@ -120,10 +135,18 @@
       navbar.parentNode.insertBefore(sentinel, navbar);
     }
 
-    const updateState = () => {
-      const sentinelTop = sentinel.getBoundingClientRect().top;
+    const restGap = getRestGap(navig);
 
-      navbar.classList.toggle("scrolled", sentinelTop <= 0);
+    const updateState = () => {
+      const sentinelBottom = sentinel.getBoundingClientRect().bottom;
+
+      /*
+        On active .scrolled quand la barre VISUELLE touche le haut.
+        Comme la barre a une marge haute au repos, on tient compte de cette marge.
+      */
+      const shouldBeScrolled = sentinelBottom <= -restGap;
+
+      navbar.classList.toggle("scrolled", shouldBeScrolled);
     };
 
     window.addEventListener("scroll", updateState, { passive: true });
@@ -178,7 +201,6 @@
       navig.appendChild(right);
     }
 
-    /* On recrée le profil à chaque init pour éviter de garder l'ancien ordre */
     const oldProfile = left.querySelector(".utpp-navProfile");
     const newProfile = createProfile();
 
@@ -190,16 +212,12 @@
 
     center.querySelectorAll("a.mainmenu").forEach(prepareLink);
 
-    if (navbar.dataset.utppStickyReady !== "1") {
-      navbar.dataset.utppStickyReady = "1";
-      setupStickyState(navbar);
-    } else {
-      navbar.classList.remove("scrolled");
-      setupStickyState(navbar);
-    }
+    setupStickyState(navbar, navig);
 
     return true;
   };
+
+  let observer;
 
   const boot = () => {
     const ready = buildNavbar();
@@ -209,7 +227,7 @@
     }
   };
 
-  let observer = new MutationObserver(boot);
+  observer = new MutationObserver(boot);
 
   observer.observe(document.documentElement, {
     childList: true,
