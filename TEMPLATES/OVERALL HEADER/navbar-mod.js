@@ -109,43 +109,28 @@
     return profile;
   };
 
-  const setupStickyState = (navbar) => {
-    if (navbar.dataset.utppStickyReady === "1") return;
+const setupStickyState = (navbar) => {
+  if (navbar.dataset.utppStickyReady === "1") return;
 
-    navbar.dataset.utppStickyReady = "1";
+  navbar.dataset.utppStickyReady = "1";
 
-    const sentinel = document.createElement("span");
-    sentinel.className = "utpp-navbarSentinel";
-    sentinel.setAttribute("aria-hidden", "true");
+  const sentinel = document.createElement("span");
+  sentinel.className = "utpp-navbarSentinel";
+  sentinel.setAttribute("aria-hidden", "true");
 
-    navbar.parentNode.insertBefore(sentinel, navbar);
+  navbar.parentNode.insertBefore(sentinel, navbar);
 
-    const updateState = () => {
-      navbar.classList.toggle(
-        "scrolled",
-        sentinel.getBoundingClientRect().top < 0
-      );
-    };
+  const updateState = () => {
+    const sentinelTop = sentinel.getBoundingClientRect().top;
 
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          navbar.classList.toggle(
-            "scrolled",
-            entry.boundingClientRect.top < 0
-          );
-        },
-        { threshold: [0] }
-      );
-
-      observer.observe(sentinel);
-    } else {
-      window.addEventListener("scroll", updateState, { passive: true });
-    }
-
-    window.addEventListener("resize", updateState, { passive: true });
-    updateState();
+    navbar.classList.toggle("scrolled", sentinelTop < 0);
   };
+
+  window.addEventListener("scroll", updateState, { passive: true });
+  window.addEventListener("resize", updateState, { passive: true });
+
+  updateState();
+};
 
   const buildNavbar = () => {
     const navbar = document.querySelector(NAVBAR_SELECTOR);
