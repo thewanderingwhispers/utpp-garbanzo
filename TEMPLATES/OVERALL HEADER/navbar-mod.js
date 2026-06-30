@@ -46,8 +46,6 @@
   };
 
   const prepareLink = (link) => {
-    if (link.dataset.utppReady === "1") return;
-
     const label = getCleanLabel(link);
     const icon = iconFromHref(link);
 
@@ -57,13 +55,15 @@
     link.removeAttribute("title");
     link.style.setProperty("--utpp-icon", `url("${LUCIDE_BASE}${icon}.svg")`);
 
-    link.textContent = "";
+    if (!link.querySelector(".link-text")) {
+      link.textContent = "";
 
-    const span = document.createElement("span");
-    span.className = "link-text";
-    span.textContent = label;
+      const span = document.createElement("span");
+      span.className = "link-text";
+      span.textContent = label;
 
-    link.appendChild(span);
+      link.appendChild(span);
+    }
   };
 
   const createProfile = () => {
@@ -80,10 +80,6 @@
       loggedIn ? `Profil de ${username}` : "Connexion"
     );
 
-    const openBracket = document.createElement("span");
-    openBracket.className = "utpp-navProfileBracket";
-    openBracket.textContent = "[";
-
     const avatar = document.createElement("span");
     avatar.className = "utpp-navProfileAvatar";
 
@@ -96,6 +92,10 @@
       avatar.appendChild(fallback);
     }
 
+    const openBracket = document.createElement("span");
+    openBracket.className = "utpp-navProfileBracket";
+    openBracket.textContent = "[";
+
     const name = document.createElement("span");
     name.className = "utpp-navProfileName";
     name.textContent = `(${username})`;
@@ -104,33 +104,34 @@
     closeBracket.className = "utpp-navProfileBracket";
     closeBracket.textContent = "]";
 
+    /* Résultat : AVATAR [ (Pseudo) ] */
     profile.append(avatar, openBracket, name, closeBracket);
 
     return profile;
   };
 
-const setupStickyState = (navbar) => {
-  if (navbar.dataset.utppStickyReady === "1") return;
+  const setupStickyState = (navbar) => {
+    let sentinel = navbar.previousElementSibling;
 
-  navbar.dataset.utppStickyReady = "1";
+    if (!sentinel || !sentinel.classList.contains("utpp-navbarSentinel")) {
+      sentinel = document.createElement("span");
+      sentinel.className = "utpp-navbarSentinel";
+      sentinel.setAttribute("aria-hidden", "true");
+      navbar.parentNode.insertBefore(sentinel, navbar);
+    }
 
-  const sentinel = document.createElement("span");
-  sentinel.className = "utpp-navbarSentinel";
-  sentinel.setAttribute("aria-hidden", "true");
+    const updateState = () => {
+      const sentinelTop = sentinel.getBoundingClientRect().top;
 
-  navbar.parentNode.insertBefore(sentinel, navbar);
+      navbar.classList.toggle("scrolled", sentinelTop <= 0);
+    };
 
-  const updateState = () => {
-    const sentinelTop = sentinel.getBoundingClientRect().top;
+    window.addEventListener("scroll", updateState, { passive: true });
+    window.addEventListener("resize", updateState, { passive: true });
 
-    navbar.classList.toggle("scrolled", sentinelTop < 0);
+    requestAnimationFrame(updateState);
+    setTimeout(updateState, 250);
   };
-
-  window.addEventListener("scroll", updateState, { passive: true });
-  window.addEventListener("resize", updateState, { passive: true });
-
-  updateState();
-};
 
   const buildNavbar = () => {
     const navbar = document.querySelector(NAVBAR_SELECTOR);
@@ -139,19 +140,19 @@ const setupStickyState = (navbar) => {
     const navig = navbar.querySelector(NAVIG_SELECTOR);
     if (!navig) return false;
 
+    let left = navig.querySelector(".utpp-navLeft");
     let center = navig.querySelector(".utpp-navCenter");
+    let right = navig.querySelector(".utpp-navRight");
 
     if (!center) {
-      const left = document.createElement("div");
+      left = document.createElement("div");
       left.className = "utpp-navLeft";
-
-      const profile = createProfile();
 
       center = document.createElement("nav");
       center.className = "utpp-navCenter";
       center.setAttribute("aria-label", "Navigation principale");
 
-      const right = document.createElement("div");
+      right = document.createElement("div");
       right.className = "utpp-navRight";
       right.setAttribute("aria-label", "Modules rapides");
 
@@ -159,34 +160,64 @@ const setupStickyState = (navbar) => {
         center.appendChild(navig.firstChild);
       }
 
-      left.append(profile, center);
+      left.appendChild(center);
       navig.append(left, right);
     }
 
+    if (!left) {
+      left = document.createElement("div");
+      left.className = "utpp-navLeft";
+      navig.insertBefore(left, navig.firstChild);
+      left.appendChild(center);
+    }
+
+    if (!right) {
+      right = document.createElement("div");
+      right.className = "utpp-navRight";
+      right.setAttribute("aria-label", "Modules rapides");
+      navig.appendChild(right);
+    }
+
+    /* On recrée le profil à chaque init pour éviter de garder l'ancien ordre */
+    const oldProfile = left.querySelector(".utpp-navProfile");
+    const newProfile = createProfile();
+
+    if (oldProfile) {
+      oldProfile.replaceWith(newProfile);
+    } else {
+      left.insertBefore(newProfile, center);
+    }
+
     center.querySelectorAll("a.mainmenu").forEach(prepareLink);
-    setupStickyState(navbar);
+
+    if (navbar.dataset.utppStickyReady !== "1") {
+      navbar.dataset.utppStickyReady = "1";
+      setupStickyState(navbar);
+    } else {
+      navbar.classList.remove("scrolled");
+      setupStickyState(navbar);
+    }
 
     return true;
   };
 
-  let mutationObserver;
-
   const boot = () => {
     const ready = buildNavbar();
 
-    if (ready && mutationObserver) {
-      mutationObserver.disconnect();
+    if (ready && observer) {
+      observer.disconnect();
     }
   };
 
-  document.addEventListener("DOMContentLoaded", boot);
-  window.addEventListener("load", boot);
+  let observer = new MutationObserver(boot);
 
-  mutationObserver = new MutationObserver(boot);
-  mutationObserver.observe(document.documentElement, {
+  observer.observe(document.documentElement, {
     childList: true,
     subtree: true
   });
+
+  document.addEventListener("DOMContentLoaded", boot);
+  window.addEventListener("load", boot);
 
   boot();
 })();
