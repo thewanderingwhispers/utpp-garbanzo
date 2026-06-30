@@ -1,6 +1,8 @@
 .mainmenu img { display: none; } 
 .mainmenu { background: none !important; } 
 .mainmenu[href="/calendar"]{display:none!important;} 
+.mainmenu[href="/groups"]{display:none!important;} 
+.mainmenu[href="/search"]{display:none!important;} 
 .mainmenu[href="/gallery/index.htm"]{display:none!important;} 
 .mainmenu[href="/images"]{display:none!important;} 
 .mainmenu[href="/discover"]{display:none!important;} 
