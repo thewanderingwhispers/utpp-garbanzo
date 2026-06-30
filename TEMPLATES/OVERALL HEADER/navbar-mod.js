@@ -104,7 +104,7 @@
     closeBracket.className = "utpp-navProfileBracket";
     closeBracket.textContent = "]";
 
-    profile.append(openBracket, avatar, name, closeBracket);
+    profile.append(avatar, openBracket, name, closeBracket);
 
     return profile;
   };
