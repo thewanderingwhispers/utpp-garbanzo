@@ -76,7 +76,8 @@
   left: 50%;
   transform: translateX(-50%);
   width: calc(100vw - 15px);
-  margin-top: 0;
+  max-width: none;
+  margin: 0;
   padding: 10px 40px;
   border-radius: 0 0 var(--th-radius-md) var(--th-radius-md);
   background: rgba(255, 250, 242, 0.94);
@@ -92,6 +93,11 @@
   transition:
     margin var(--th-trans-med),
     transform var(--th-trans-med);
+}
+
+.utpp-headerNavbar.scrolled .utpp-navLeft {
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .utpp-navCenter,
@@ -123,12 +129,7 @@
     transform var(--th-trans-med);
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover .utpp-navLeft {
-  margin-left: 0;
-  margin-right: auto;
-}
-
-.utpp-headerNavbar.scrolled .utpp_navig:hover .utpp-navRight {
+.utpp-headerNavbar.scrolled .utpp-navRight {
   max-width: 420px;
   opacity: 1;
   pointer-events: auto;
@@ -158,7 +159,7 @@
     transform var(--th-trans-med);
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover .utpp-navProfile {
+.utpp-headerNavbar.scrolled .utpp-navProfile {
   max-width: 280px;
   opacity: 1;
   pointer-events: auto;
@@ -202,6 +203,7 @@
 
 .utpp_navig a.mainmenu {
   --utpp-icon: url("https://unpkg.com/lucide-static/icons/circle-dot.svg");
+
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -269,22 +271,24 @@
   -webkit-mask-size: contain;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
+
   transition:
     background var(--th-trans-fast),
     transform var(--th-trans-fast);
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu {
+.utpp-headerNavbar.scrolled .utpp_navig a.mainmenu {
   width: 38px;
   height: 38px;
   min-height: 38px;
   padding: 0;
+
   border-radius: 50%;
   background: var(--th-grad-chip);
   box-shadow: 0 8px 18px var(--th-cl-shadow);
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu .link-text {
+.utpp-headerNavbar.scrolled .utpp_navig a.mainmenu .link-text {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -294,26 +298,25 @@
   transform: scale(0.82);
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu .link-text::after {
+.utpp-headerNavbar.scrolled .utpp_navig a.mainmenu .link-text::after {
   display: none;
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu::before {
+.utpp-headerNavbar.scrolled .utpp_navig a.mainmenu::before {
   display: block;
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu:hover {
+.utpp-headerNavbar.scrolled .utpp_navig a.mainmenu:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 24px var(--th-cl-shadowStrong);
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu:hover::before {
+.utpp-headerNavbar.scrolled .utpp_navig a.mainmenu:hover::before {
   background: var(--th-cl-font);
   transform: scale(1.12) rotate(8deg);
 }
 
-/* Tooltip des boutons */
-.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu::after {
+.utpp-headerNavbar.scrolled .utpp_navig a.mainmenu::after {
   content: attr(data-tip);
   position: absolute;
   left: 50%;
@@ -340,7 +343,7 @@
     transform var(--th-trans-fast);
 }
 
-.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu:hover::after {
+.utpp-headerNavbar.scrolled .utpp_navig a.mainmenu:hover::after {
   opacity: 1;
   transform: translate(-50%, 0);
 }
@@ -351,6 +354,7 @@
   }
 
   .utpp-headerNavbar.scrolled .utpp_navig {
+    width: calc(100vw - 10px);
     padding-inline: 18px;
   }
 
@@ -359,7 +363,7 @@
     gap: 12px;
   }
 
-  .utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu {
+  .utpp-headerNavbar.scrolled .utpp_navig a.mainmenu {
     width: 34px;
     height: 34px;
     min-height: 34px;
