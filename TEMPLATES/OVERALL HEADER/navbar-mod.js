@@ -18,7 +18,7 @@
     if (path.startsWith("/search")) return "search";
     if (path.startsWith("/memberlist")) return "users";
     if (path.startsWith("/groups")) return "users-round";
-    if (path.startsWith("/profile")) return "user";
+    if (path.startsWith("/profile")) return "pencil";
     if (path.startsWith("/privmsg")) return "mail";
     if (path.startsWith("/register")) return "user-plus";
     if (path.startsWith("/login")) return "log-in";
