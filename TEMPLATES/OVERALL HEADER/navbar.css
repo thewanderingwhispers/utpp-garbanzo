@@ -1,139 +1,373 @@
-.mainmenu img { display: none; } 
-.mainmenu { background: none !important; } 
-.mainmenu[href="/calendar"]{display:none!important;} 
-.mainmenu[href="/groups"]{display:none!important;} 
-.mainmenu[href="/search"]{display:none!important;} 
-.mainmenu[href="/gallery/index.htm"]{display:none!important;} 
-.mainmenu[href="/images"]{display:none!important;} 
-.mainmenu[href="/discover"]{display:none!important;} 
-.mainmenu[href="/faq"]{display:none!important;} 
+.utpp-headerNavbar,
+.utpp-headerNavbar * {
+  box-sizing: border-box;
+}
 
-.utpp-headerNavba ul, .utpp-headerNavba li { list-style: none; margin: 0; padding: 0; } 
+.utpp-navbarSentinel {
+  display: block;
+  height: 1px;
+  pointer-events: none;
+}
 
-.utpp-headerNavba { position: sticky; top: 0; z-index: 990; width: 100%; } 
+.mainmenu img {
+  display: none !important;
+}
+
+.mainmenu {
+  background: none !important;
+}
+
+.utpp_navig a.mainmenu[href="/calendar"],
+.utpp_navig a.mainmenu[href$="/calendar"],
+.utpp_navig a.mainmenu[href="/groups"],
+.utpp_navig a.mainmenu[href$="/groups"],
+.utpp_navig a.mainmenu[href^="/search"],
+.utpp_navig a.mainmenu[href="/gallery/index.htm"],
+.utpp_navig a.mainmenu[href$="/gallery/index.htm"],
+.utpp_navig a.mainmenu[href="/images"],
+.utpp_navig a.mainmenu[href$="/images"],
+.utpp_navig a.mainmenu[href="/discover"],
+.utpp_navig a.mainmenu[href$="/discover"],
+.utpp_navig a.mainmenu[href="/faq"],
+.utpp_navig a.mainmenu[href$="/faq"] {
+  display: none !important;
+}
+
+.utpp-headerNavbar ul,
+.utpp-headerNavbar li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.utpp-headerNavbar {
+  position: sticky;
+  top: 0;
+  z-index: 990;
+  width: 100%;
+}
+
 .utpp_navig {
   position: relative;
+  width: min(980px, calc(100vw - 30px));
+  min-height: 58px;
+  margin: 20px auto 0;
+  padding: 12px 34px;
+  display: flex;
+  align-items: center;
+  gap: var(--th-panel-gap);
+  background: rgba(255, 250, 242, 0.76);
+  border: 1px solid var(--th-cl-bord);
+  border-radius: var(--th-radius-lg);
+  box-shadow: 0 12px 30px var(--th-cl-shadow);
+  backdrop-filter: blur(10px);
+  transition:
+    width var(--th-trans-med),
+    max-width var(--th-trans-med),
+    margin var(--th-trans-med),
+    padding var(--th-trans-med),
+    border-radius var(--th-trans-med),
+    background var(--th-trans-med),
+    box-shadow var(--th-trans-med),
+    transform var(--th-trans-med);
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig {
   left: 50%;
   transform: translateX(-50%);
-  width: 100%;
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 15px 40px;
-  background: rgba(20, 20, 20, 0.6);
-  backdrop-filter: blur(6px);
-  border-radius: var(--mainradius);
-  transition: width 0.35s ease,
-              transform 0.6s cubic-bezier(.22,1,.36,1),
-              border-radius 0.4s ease,
-              background 0.3s ease,
-              box-shadow 0.3s ease,
-              padding 0.3s ease,
-              margin-top 0.3s ease;
-}
-
-.utpp_navig ul {
-  display: flex;
-  gap: 20px;
-}
-
-.utpp_navig a {
-  position: relative;
-  text-decoration: none;
-  color: #ccc;
-  font-size: 0.95rem;
-  letter-spacing: 1px;
-  transition: color 0.3s;
-}
-
-.utpp_navig a.mainmenu span.link-text {
-  display: inline-block;
-  transition: 0.3s;
-}
-
-.utpp_navig a.mainmenu:hover span.link-text {
-  background: linear-gradient(to right, var(--colornews), var(--coloradd));
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.utpp_navig a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0%;
-  height: 2px;
-  background: #ccc;
-  transition: width 0.3s;
-}
-
-.utpp_navig a:hover::after {
-  width: 100%;
-}
-
-.utpp-headerNavba.scrolled .utpp_navig {
   width: calc(100vw - 15px);
-  transform: translateX(-50%);
-  border-radius: 0;
   margin-top: 0;
   padding: 10px 40px;
-  background: rgba(10, 10, 10, 0.95);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  border-radius: 0 0 var(--th-radius-md) var(--th-radius-md);
+  background: rgba(255, 250, 242, 0.94);
+  box-shadow: 0 16px 38px var(--th-cl-shadowStrong);
+}
+
+.utpp-navLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  margin-inline: auto;
+  transition:
+    margin var(--th-trans-med),
+    transform var(--th-trans-med);
+}
+
+.utpp-navCenter,
+.utpp-navCenter ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.utpp-navCenter li {
+  display: contents;
+}
+
+.utpp-navRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(12px);
+  transition:
+    max-width var(--th-trans-med),
+    opacity var(--th-trans-med),
+    transform var(--th-trans-med);
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover .utpp-navLeft {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover .utpp-navRight {
+  max-width: 420px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.utpp-navProfile {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateX(-8px);
+  color: var(--th-cl-font);
+  text-decoration: none;
+  font-family: var(--fst3);
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition:
+    max-width var(--th-trans-med),
+    opacity var(--th-trans-med),
+    transform var(--th-trans-med);
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover .utpp-navProfile {
+  max-width: 280px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.utpp-navProfileBracket {
+  color: var(--th-cl-sub);
+}
+
+.utpp-navProfileAvatar {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--th-grad-chip);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 0 4px 12px var(--th-cl-shadow);
+}
+
+.utpp-navProfileAvatar img {
+  display: block !important;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.utpp-navProfileFallback {
+  color: var(--th-cl-font);
+  font-size: 0.7rem;
+}
+
+.utpp-navProfileName {
+  color: var(--th-cl-font);
 }
 
 .utpp_navig a.mainmenu {
-  position: inline-flex;
-  padding-left: 28px;
+  --utpp-icon: url("https://unpkg.com/lucide-static/icons/circle-dot.svg");
+  position: relative;
+  display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  min-height: 32px;
+  padding: 5px 0;
+  color: var(--th-cl-txt);
+  text-decoration: none;
+  font-family: var(--fst3);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition:
+    color var(--th-trans-fast),
+    width var(--th-trans-med),
+    height var(--th-trans-med),
+    padding var(--th-trans-med),
+    border-radius var(--th-trans-med),
+    background var(--th-trans-med),
+    box-shadow var(--th-trans-med),
+    transform var(--th-trans-fast);
 }
 
-.utpp_navig a.mainmenu::after {
+.utpp_navig a.mainmenu:hover {
+  color: var(--th-cl-acc3);
+}
+
+.utpp_navig a.mainmenu .link-text {
+  position: relative;
+  display: inline-block;
+  transition:
+    opacity var(--th-trans-fast),
+    transform var(--th-trans-fast);
+}
+
+.utpp_navig a.mainmenu .link-text::after {
   content: "";
   position: absolute;
-  bottom: -4px;
-  left: 28px;
-  width: 0%;
+  left: 50%;
+  bottom: -5px;
+  width: 0;
   height: 2px;
-  background: linear-gradient(to right, var(--colornews), var(--coloradd));
-  transition: width 0.3s;
+  border-radius: 999px;
+  background: var(--th-grad-chip);
+  transform: translateX(-50%);
+  transition: width var(--th-trans-fast);
 }
 
-.utpp_navig a.mainmenu:hover::after {
-  width: calc(100% - 28px);
+.utpp_navig a.mainmenu:hover .link-text::after {
+  width: 100%;
 }
 
 .utpp_navig a.mainmenu::before {
   content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  display: none;
   width: 18px;
   height: 18px;
-  background-color: #ccc;
+  background: var(--th-cl-font);
+  mask-image: var(--utpp-icon);
   mask-size: contain;
   mask-repeat: no-repeat;
   mask-position: center;
-  transition: 0.3s;
+  -webkit-mask-image: var(--utpp-icon);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  transition:
+    background var(--th-trans-fast),
+    transform var(--th-trans-fast);
 }
 
-.utpp_navig a.mainmenu:hover::before {
-  background-color: var(--colornews);
+.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu {
+  width: 38px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--th-grad-chip);
+  box-shadow: 0 8px 18px var(--th-cl-shadow);
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu .link-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: scale(0.82);
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu .link-text::after {
+  display: none;
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu::before {
+  display: block;
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px var(--th-cl-shadowStrong);
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu:hover::before {
+  background: var(--th-cl-font);
+  transform: scale(1.12) rotate(8deg);
+}
+
+/* Tooltip des boutons */
+.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: -36px;
+  z-index: 20;
+  max-width: 180px;
+  padding: 6px 9px;
+  color: var(--th-cl-card);
+  background: var(--th-cl-font);
+  border-radius: var(--th-radius-sm);
+  box-shadow: 0 8px 18px var(--th-cl-shadowStrong);
+  font-family: var(--fte2);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 5px);
+  transition:
+    opacity var(--th-trans-fast),
+    transform var(--th-trans-fast);
+}
+
+.utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu:hover::after {
   opacity: 1;
-  transform: translateY(-50%) scale(1.15) rotate(9deg);
+  transform: translate(-50%, 0);
 }
 
-.utpp_navig a.mainmenu:hover::before { background-color:var(--colornews); opacity: 1; transform: translateY(-50%) scale(1.15) rotate(9deg);} 
-.mainmenu[href="/"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/home.svg"); } 
-.mainmenu[href="/search"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/search.svg"); } 
-.mainmenu[href="/memberlist"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/users.svg"); } 
-.mainmenu[href="/groups"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/group.svg"); } 
-.mainmenu[href="/profile?mode=editprofile"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/user.svg"); } 
-.mainmenu[href="/privmsg?folder=inbox"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/mail.svg"); } 
-.mainmenu[href="/register"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/user-plus.svg"); } 
-.mainmenu[href="/login"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/log-in.svg"); } 
-.mainmenu[href*="logout=1"]::before { mask-image: url("https://unpkg.com/lucide-static/icons/log-out.svg"); }
+@media (max-width: 720px) {
+  .utpp_navig {
+    padding-inline: 18px;
+  }
+
+  .utpp-headerNavbar.scrolled .utpp_navig {
+    padding-inline: 18px;
+  }
+
+  .utpp-navCenter,
+  .utpp-navCenter ul {
+    gap: 12px;
+  }
+
+  .utpp-headerNavbar.scrolled .utpp_navig:hover a.mainmenu {
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+  }
+
+  .utpp-navProfileName {
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
